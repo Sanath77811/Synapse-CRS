@@ -1,0 +1,13 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://synapse-crs.local/schemas/case-create-1.0.0.schema.json",
+  "title": "CaseCreate",
+  "type": "object",
+  "additionalProperties": false,
+  "x-synapse-contract-version": "1.0.0",
+  "required": ["target_id", "reason"],
+  "properties": {
+    "target_id": {"type": "string", "format": "uuid"},
+    "reason": {"type": "string", "minLength": 1, "maxLength": 1000}
+  }
+}

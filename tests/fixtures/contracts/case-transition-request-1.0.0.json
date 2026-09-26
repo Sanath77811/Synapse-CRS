@@ -1,0 +1,4 @@
+{
+  "to_state": "OBSERVATION",
+  "reason": "Record the next pipeline state. This request does not collect telemetry."
+}
