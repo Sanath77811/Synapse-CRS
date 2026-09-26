@@ -65,6 +65,40 @@ def test_viewer_cannot_create_or_revoke_targets(client, tokens) -> None:
     assert revoked.status_code == 403
 
 
+def test_viewer_cannot_create_or_transition_cases(client, tokens) -> None:
+    created = client.post(
+        "/api/v1/targets",
+        headers=auth(tokens["admin"]),
+        json=target_payload(),
+    )
+    assert created.status_code == 201
+    target_id = created.json()["id"]
+    denied = client.post(
+        "/api/v1/cases",
+        headers=auth(tokens["viewer"]),
+        json={"target_id": target_id, "reason": "Viewer attempts to open a case."},
+    )
+    assert denied.status_code == 403
+    assert denied.json()["error"]["code"] == "authorization_failed"
+
+    opened = client.post(
+        "/api/v1/cases",
+        headers=auth(tokens["admin"]),
+        json={"target_id": target_id, "reason": "Admin opens a case."},
+    )
+    assert opened.status_code == 201
+    case_id = opened.json()["id"]
+    denied_transition = client.post(
+        f"/api/v1/cases/{case_id}/transitions",
+        headers=auth(tokens["viewer"]),
+        json={"to_state": "OBSERVATION", "reason": "Viewer attempts a transition."},
+    )
+    assert denied_transition.status_code == 403
+    current = client.get(f"/api/v1/cases/{case_id}", headers=auth(tokens["viewer"]))
+    assert current.status_code == 200
+    assert current.json()["state"] == "AUTHORIZED_TARGET"
+
+
 def test_target_creation_records_eligibility_and_audit(client, tokens) -> None:
     response = client.post(
         "/api/v1/targets",
@@ -378,6 +412,22 @@ def test_audit_events_cannot_be_updated_or_deleted(tokens) -> None:
             connection.commit()
     message = str(denied.value).lower()
     assert "permission denied" in message or "append-only" in message
+    with application.connect() as connection:
+        with pytest.raises(DBAPIError) as deleted:
+            connection.execute(text("DELETE FROM audit_events"))
+            connection.commit()
+    assert "permission denied" in str(deleted.value).lower()
+    with application.connect() as connection:
+        with pytest.raises(DBAPIError) as truncated:
+            connection.execute(text("TRUNCATE TABLE audit_events"))
+            connection.commit()
+    assert "permission denied" in str(truncated.value).lower()
+    with application.connect() as connection:
+        with pytest.raises(DBAPIError) as disabled:
+            connection.execute(text("ALTER TABLE audit_events DISABLE TRIGGER USER"))
+            connection.commit()
+    disabled_message = str(disabled.value).lower()
+    assert "permission denied" in disabled_message or "must be owner" in disabled_message
     application.dispose()
 
 

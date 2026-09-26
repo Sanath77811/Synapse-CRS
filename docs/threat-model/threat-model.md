@@ -17,8 +17,8 @@ Synapse-CRS v0.1 is a local control plane: a FastAPI process, a PostgreSQL datab
 | --- | --- |
 | Admin operator | May register, revoke, and advance cases |
 | Viewer | May read registry, cases, and audit |
-| `synapse_app` database role | May insert audit events and update chain bookkeeping. May not update or delete audit events |
-| Migration role | Owns tables, runs Alembic, and can disable triggers |
+| `synapse_app` database role | May insert audit events and update chain bookkeeping. May revoke a target and advance a case one legal step. May not restore a revocation, skip a case state, or update, delete, or truncate audit events |
+| Migration role | Owns tables, runs Alembic in a separate process, and can disable triggers. Its connection string is not given to the API |
 | Unauthenticated caller | May call `/health`, `/ready`, and `/` only |
 | External network peer | Not a client this version contacts |
 
@@ -36,10 +36,12 @@ Synapse-CRS v0.1 is a local control plane: a FastAPI process, a PostgreSQL datab
 | Unauthenticated use of the registry | Bearer token required. Empty token configuration prevents process start |
 | Viewer performs a write | Admin role required. Failure is 403 |
 | Caller supplies an audit actor | Actor is taken from the token record. Extra JSON fields are rejected |
-| Expired or revoked target proceeds toward a later action | Eligibility is re-checked on case create and on every transition. Failure is 409 and the row is unchanged |
+| Expired or revoked target proceeds toward a later action | The target row is locked, then eligibility is re-checked on case create and on every transition. Failure is 409 and the case row is unchanged |
+| Application role restores a revoked target or skips case states | Column privileges and triggers allow only `active` to `revoked` and the next pipeline state |
+| Migration credential in the API process | Compose passes it only to the one-shot migrate service. The API exits if the variable is set |
 | Over-broad scope or unknown capability | Request validation rejects the write before insert |
 | Ordinary application update or delete of an audit event | Privileges omit update and delete. Triggers raise `audit_events are append-only` for the table owner as well |
-| Error response echoes a token or SQL exception | Validation errors omit the authorization header. Database failures return a fixed message |
+| Error response or API log echoes a token, DSN, or SQL exception | Validation errors omit the authorization header. Database failures return a fixed message. Unexpected errors log an exception type and not the exception text |
 | Production boot with a short token | `SYNAPSE_ENVIRONMENT=production` requires 32-character tokens and disables `/docs` |
 | Wildcard browser origin | `SYNAPSE_CORS_ORIGINS=*` is rejected at startup |
 

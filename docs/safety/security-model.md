@@ -10,17 +10,18 @@
 - An illegal transition returns 409. Case state does not change.
 - If the audit insert fails, the surrounding transaction rolls back the business write.
 - `/ready` returns 503 when PostgreSQL cannot answer `SELECT 1`, without including the driver error in the response.
+- Unexpected exceptions return a fixed 500 body. Logs record the exception type only.
 
 ## Least privilege
 
-Compose creates `synapse_app` and runs migrations as the PostgreSQL superuser defined by `POSTGRES_USER`. The API connects as `synapse_app`.
+Compose creates `synapse_app`. A one-shot `migrate` service runs Alembic as the PostgreSQL superuser defined by `POSTGRES_USER`. The API process receives only `DATABASE_URL` and connects as `synapse_app`. It refuses to start when `MIGRATION_DATABASE_URL` is set.
 
 | Role | Granted in v0.1 |
 | --- | --- |
-| `synapse_app` | `SELECT`, `INSERT`, `UPDATE` on `targets` and `cases`; `SELECT`, `INSERT` on `case_transitions`; `SELECT`, `INSERT` on `audit_events`; `SELECT`, `UPDATE` on `audit_chain_state` |
-| Migration user | Table owner. Required to create schema and, in tests, to truncate fixtures |
+| `synapse_app` | `SELECT`, `INSERT` on `targets` and `cases`; `UPDATE` of `authorization_status` and `updated_at` on `targets`; `UPDATE` of `state` and `updated_at` on `cases`; `SELECT`, `INSERT` on `case_transitions`; `SELECT`, `INSERT` on `audit_events`; `SELECT`, `UPDATE` on `audit_chain_state` |
+| Migration user | Table owner. Required to create schema and, in tests, to truncate fixtures. Not present in the API process |
 
-The grants are applied only when the `synapse_app` role already exists. Start PostgreSQL (so `infra/postgres/init-roles.sh` runs) before the first migration. Tests create the role themselves when it is absent.
+Triggers reject any authorization change other than `active` to `revoked`, a case insert whose state is not `AUTHORIZED_TARGET`, and a case update that is not the next state in the linear pipeline. Migration `0002_enforce_state` fails if `synapse_app` does not already exist. Start PostgreSQL (so `infra/postgres/init-roles.sh` runs) before the migrate service. Tests create the role themselves when it is absent.
 
 ## Authentication
 

@@ -6,6 +6,7 @@ from uuid import UUID, uuid4
 from sqlalchemy import select
 from sqlalchemy.orm import Session
 from synapse_audit import (
+    GENESIS_HASH,
     AuditLink,
     ChainVerification,
     compute_event_hash,
@@ -103,4 +104,25 @@ def load_chain(session: Session) -> list[AuditLink]:
 
 
 def verify_stored_chain(session: Session) -> ChainVerification:
-    return verify_chain(load_chain(session))
+    """Replay audit events and require the chain-state head to match.
+
+    A matching event list with a rewritten ``audit_chain_state.head_hash``
+    is a failed verification. The bookkeeping row is not part of the log.
+    """
+    events = load_chain(session)
+    result = verify_chain(events)
+    if not result.valid:
+        return result
+    state = session.get(AuditChainStateRow, 1)
+    expected_head = result.head_hash if result.head_hash is not None else GENESIS_HASH
+    head_matches = state is not None and state.head_hash == expected_head
+    sequence_matches = state is not None and int(state.next_sequence) == result.event_count + 1
+    if head_matches and sequence_matches:
+        return result
+    return ChainVerification(
+        valid=False,
+        event_count=result.event_count,
+        head_hash=None,
+        failure_sequence=result.event_count or None,
+        failure_reason="head_hash_mismatch" if not head_matches else "chain_state_mismatch",
+    )

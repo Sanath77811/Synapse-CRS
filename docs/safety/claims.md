@@ -6,14 +6,16 @@ These statements match tests in this repository:
 
 - The API starts only with a database URL and a non-empty token configuration.
 - Unauthenticated registry calls are rejected.
-- A viewer cannot create or revoke a target.
+- A viewer cannot create or revoke a target, open a case, or transition a case.
+- The API refuses to start when `MIGRATION_DATABASE_URL` is set. Compose gives that URL only to a one-shot migration process.
 - A target can be stored with an owner, scope, expiry, capability allowlist, and timestamps.
 - A target whose expiry is not in the future, or whose authorization is revoked, is not eligible. The API will not open or advance a case for it.
 - Scope values outside `lab` and `development`, empty asset lists, unbounded asset names, and capabilities outside the allowlist are rejected.
 - Case state moves only along the documented linear path. A skipped or backward move is rejected.
 - A transition into `ACTION`, and every other transition, records `executed: false` and does not start a program.
-- Audit events form a hash chain from a genesis hash. `/api/v1/audit/verify` replays that chain.
-- The application role cannot update audit events. A table-owner `UPDATE`, `DELETE`, or `TRUNCATE` hits an append-only trigger.
+- Audit events form a hash chain from a genesis hash. `/api/v1/audit/verify` replays that chain and rejects a stored head that does not match the replay.
+- The application role cannot update, delete, or truncate audit events. A table-owner `UPDATE`, `DELETE`, or `TRUNCATE` hits an append-only trigger.
+- The application role cannot change a revoked target back to `active` or move a case except along the next legal transition. Case create and transition lock the target row before the eligibility check.
 
 ## What v0.1 does not do
 
@@ -32,7 +34,7 @@ The case state name `VERIFICATION` is a label in a state machine. Reaching it do
 
 ## Audit limitation
 
-The hash chain and the append-only trigger are tamper-evidence and tamper-resistance for the application role. They are not absolute tamper-proof logging. A database owner can disable triggers. Verification of the chain detects a bad link only if the modified rows are still the rows the verifier reads.
+The hash chain and the append-only trigger are tamper-evidence and tamper-resistance for the application role. They are not absolute tamper-proof logging. A database owner can disable triggers. Verification fails when a stored event does not match its hash or when `audit_chain_state.head_hash` does not match the replayed chain. A well-formed insert by a role that can write `audit_events` still verifies.
 
 ## Authorization limitation
 

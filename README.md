@@ -78,7 +78,7 @@ curl -sS http://127.0.0.1:8000/health
 curl -sS http://127.0.0.1:8000/ready
 ```
 
-`/ready` reports PostgreSQL connectivity. Migrations run when the API container starts.
+`/ready` reports PostgreSQL connectivity. Compose runs migrations in a one-shot `migrate` service, then starts the API. The API process receives `DATABASE_URL` for `synapse_app` and refuses to start if `MIGRATION_DATABASE_URL` is set.
 
 Host-side tests and lint, against a `synapse_test` database on that Postgres instance:
 
@@ -106,7 +106,7 @@ More detail: [docs/development/workflow.md](docs/development/workflow.md).
 
 ## Security model
 
-Operators authenticate with bearer tokens supplied through `SYNAPSE_AUTH_TOKENS`. The application does not contain credentials. Viewers can read. Admins can register, revoke, and advance case state. Every case change re-checks target eligibility. Audit rows are inserted by `synapse_app` and cannot be updated or deleted with that role. A database owner can still disable the append-only triggers; that limit is stated in [docs/safety/claims.md](docs/safety/claims.md) and [docs/threat-model/threat-model.md](docs/threat-model/threat-model.md).
+Operators authenticate with bearer tokens supplied through `SYNAPSE_AUTH_TOKENS`. The application does not contain credentials. Viewers can read. Admins can register, revoke, and advance case state. Every case change locks the target row and re-checks eligibility. Revocation is one-way in the database, and a case row can move only along the legal transition path. Audit rows are inserted by `synapse_app` and cannot be updated, deleted, or truncated with that role. A database owner can still disable triggers; that limit is stated in [docs/safety/claims.md](docs/safety/claims.md) and [docs/threat-model/threat-model.md](docs/threat-model/threat-model.md).
 
 ## Development workflow
 

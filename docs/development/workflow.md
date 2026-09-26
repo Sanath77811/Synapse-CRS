@@ -41,7 +41,7 @@ docker compose --env-file .env -f infra/docker-compose.yml down -v
 docker compose --env-file .env -f infra/docker-compose.yml up --build
 ```
 
-The Postgres init script runs only on a new volume.
+The Postgres init script runs only on a new volume. Compose then runs the `migrate` service once and starts the API only after it exits successfully. The API container does not receive `MIGRATION_DATABASE_URL`. `make api` refuses to start when that variable is present in the environment.
 
 ## Review rule
 

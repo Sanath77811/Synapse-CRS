@@ -24,7 +24,6 @@ class Settings(BaseSettings):
     model_config = SettingsConfigDict(env_file=".env", extra="ignore")
 
     database_url: str = Field(min_length=1)
-    migration_database_url: str | None = None
     synapse_environment: str = "local"
     synapse_auth_tokens: str
     synapse_cors_origins: str = "http://localhost:5173,http://127.0.0.1:5173"

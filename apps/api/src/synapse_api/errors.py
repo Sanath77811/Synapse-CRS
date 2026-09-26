@@ -75,7 +75,7 @@ def register_exception_handlers(app: FastAPI) -> None:
 
     @app.exception_handler(Exception)
     async def handle_unexpected(_request: Request, exc: Exception) -> JSONResponse:
-        logger.exception("request failed type=%s", type(exc).__name__)
+        logger.error("request failed error_type=%s", type(exc).__name__)
         return JSONResponse(
             status_code=500,
             content=error_body("internal_error", "The request could not be completed."),

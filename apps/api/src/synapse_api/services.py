@@ -82,6 +82,24 @@ def _require_target(session: Session, target_id: UUID) -> TargetRow:
     return row
 
 
+def _lock_target(session: Session, target_id: UUID) -> TargetRow:
+    """Lock the target row so revocation and eligibility share one order.
+
+    Callers that already locked a case row must keep that lock first.
+    append_event then locks audit chain state. That order is case, target,
+    audit chain.
+    """
+    row = session.execute(
+        select(TargetRow)
+        .where(TargetRow.id == target_id)
+        .with_for_update()
+        .execution_options(populate_existing=True)
+    ).scalar_one_or_none()
+    if row is None:
+        raise ApiError(404, "target_not_found", "Target was not found.")
+    return row
+
+
 def _require_eligible(row: TargetRow, now: datetime) -> None:
     decision = evaluate_authorization(target_record(row), now)
     if not decision.eligible:
@@ -184,7 +202,7 @@ def revoke_target(
     now: datetime | None = None,
 ) -> TargetView:
     current = now or utc_now()
-    row = _require_target(session, target_id)
+    row = _lock_target(session, target_id)
     if row.authorization_status == "revoked":
         raise ApiError(409, "target_already_revoked", "Target authorization is already revoked.")
     row.authorization_status = "revoked"
@@ -256,7 +274,7 @@ def create_case(
     now: datetime | None = None,
 ) -> CaseDetail:
     current = now or utc_now()
-    target = _require_target(session, body.target_id)
+    target = _lock_target(session, body.target_id)
     _require_eligible(target, current)
     case_id = uuid4()
     row = CaseRow(
@@ -317,7 +335,7 @@ def transition_case(
 ) -> CaseDetail:
     current = now or utc_now()
     row = _require_case(session, case_id)
-    target = _require_target(session, row.target_id)
+    target = _lock_target(session, row.target_id)
     _require_eligible(target, current)
     current_state = CaseState(row.state)
     try:

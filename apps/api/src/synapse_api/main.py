@@ -1,6 +1,7 @@
 """FastAPI composition root for Synapse-CRS v0.1."""
 
 import logging
+import os
 
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
@@ -22,7 +23,17 @@ mitigations. Transitioning a case into ACTION only updates stored state.
 """.strip()
 
 
+def _reject_migration_credentials() -> None:
+    """The API process must not be able to read the migration role's DSN."""
+    if os.environ.get("MIGRATION_DATABASE_URL"):
+        raise RuntimeError(
+            "Refusing to start the API while MIGRATION_DATABASE_URL is set. "
+            "Run migrations in a separate process."
+        )
+
+
 def create_app() -> FastAPI:
+    _reject_migration_credentials()
     settings = get_settings()
     logging.basicConfig(level=logging.INFO, format="%(levelname)s %(name)s %(message)s")
     docs_url = None if settings.synapse_environment == "production" else "/docs"

@@ -164,9 +164,15 @@ def client(tokens: dict[str, str]):
     from synapse_api.db import reset_engine
     from synapse_api.main import create_app
 
+    migration_url = os.environ.pop("MIGRATION_DATABASE_URL", None)
     get_settings.cache_clear()
     reset_engine()
-    application = create_app()
-    with TestClient(application) as test_client:
-        yield test_client
-    reset_engine()
+    try:
+        application = create_app()
+        with TestClient(application) as test_client:
+            yield test_client
+    finally:
+        reset_engine()
+        get_settings.cache_clear()
+        if migration_url is not None:
+            os.environ["MIGRATION_DATABASE_URL"] = migration_url

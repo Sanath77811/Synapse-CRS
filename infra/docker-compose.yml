@@ -19,13 +19,24 @@ services:
       timeout: 5s
       retries: 20
 
+  migrate:
+    build:
+      context: ..
+      dockerfile: infra/docker/api.Dockerfile
+    environment:
+      MIGRATION_DATABASE_URL: postgresql+psycopg://${POSTGRES_USER}:${POSTGRES_PASSWORD}@postgres:5432/${POSTGRES_DB}
+    entrypoint: ["alembic", "-c", "/app/apps/api/alembic.ini", "upgrade", "head"]
+    depends_on:
+      postgres:
+        condition: service_healthy
+    restart: "no"
+
   api:
     build:
       context: ..
       dockerfile: infra/docker/api.Dockerfile
     environment:
       DATABASE_URL: postgresql+psycopg://synapse_app:${SYNAPSE_APP_PASSWORD}@postgres:5432/${POSTGRES_DB}
-      MIGRATION_DATABASE_URL: postgresql+psycopg://${POSTGRES_USER}:${POSTGRES_PASSWORD}@postgres:5432/${POSTGRES_DB}
       SYNAPSE_ENVIRONMENT: ${SYNAPSE_ENVIRONMENT}
       SYNAPSE_AUTH_TOKENS: ${SYNAPSE_AUTH_TOKENS}
       SYNAPSE_CORS_ORIGINS: ${SYNAPSE_CORS_ORIGINS}
@@ -34,6 +45,8 @@ services:
     depends_on:
       postgres:
         condition: service_healthy
+      migrate:
+        condition: service_completed_successfully
     healthcheck:
       test:
         [
