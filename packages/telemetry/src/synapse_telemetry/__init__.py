@@ -1,7 +1,8 @@
-"""Telemetry observation contracts for Synapse-CRS.
+"""Telemetry observation contracts and Ed25519 signatures.
 
 Schema 1.0.0 describes untrusted observations. Importing this package does
-not collect, sign, transport, or store telemetry.
+not collect, transport, store, or enroll telemetry. Signing happens only
+when a caller invokes it.
 """
 
 from synapse_telemetry.envelope import (
@@ -26,6 +27,16 @@ from synapse_telemetry.envelope import (
     TelemetryEnvelope,
     format_observed_at,
 )
+from synapse_telemetry.signatures import (
+    SIGNATURE_DOMAIN,
+    SIGNATURE_LENGTH,
+    SignatureError,
+    SigningKey,
+    VerificationKey,
+    generate_signing_key,
+    sign_event,
+    verify_event,
+)
 
 __all__ = [
     "BASIS",
@@ -46,6 +57,14 @@ __all__ = [
     "NetworkConnectionObservedPayload",
     "ProcessExitedPayload",
     "ProcessStartedPayload",
+    "SIGNATURE_DOMAIN",
+    "SIGNATURE_LENGTH",
+    "SignatureError",
+    "SigningKey",
     "TelemetryEnvelope",
+    "VerificationKey",
     "format_observed_at",
+    "generate_signing_key",
+    "sign_event",
+    "verify_event",
 ]

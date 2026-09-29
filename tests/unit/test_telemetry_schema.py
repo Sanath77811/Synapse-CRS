@@ -489,7 +489,12 @@ def test_observed_at_matches_the_audit_timestamp_form() -> None:
 def test_package_has_no_host_network_or_database_io() -> None:
     offenders: list[str] = []
     python_files = [path for path in PACKAGE.rglob("*.py") if "__pycache__" not in path.parts]
-    assert sorted(path.name for path in python_files) == ["__init__.py", "envelope.py"]
+    assert sorted(path.name for path in python_files) == [
+        "__init__.py",
+        "canonical.py",
+        "envelope.py",
+        "signatures.py",
+    ]
     for path in python_files:
         text = path.read_text(encoding="utf-8")
         for token in FORBIDDEN_PACKAGE_TOKENS:
