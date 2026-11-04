@@ -10,7 +10,7 @@ from synapse_contracts.version import API_VERSION
 from synapse_api.config import get_settings
 from synapse_api.errors import register_exception_handlers
 from synapse_api.limits import RequestGuardMiddleware
-from synapse_api.routers import agents, audit, cases, health, targets, telemetry
+from synapse_api.routers import agents, audit, cases, correlation, health, targets, telemetry
 
 logger = logging.getLogger("synapse.api")
 
@@ -18,8 +18,9 @@ DESCRIPTION = """
 Synapse-CRS is a fail-closed control-plane foundation.
 
 It registers owned targets, records explicit authorization, stores case
-pipeline state, appends audit events, and accepts signed telemetry from
-enrolled agents. It does not discover vulnerabilities, exploit systems,
+pipeline state, appends audit events, accepts signed telemetry from
+enrolled agents, and correlates stored evidence into explainable findings.
+It does not discover vulnerabilities, exploit systems,
 patch binaries, or apply runtime mitigations. Transitioning a case into
 ACTION only updates stored state.
 """.strip()
@@ -62,6 +63,7 @@ def create_app() -> FastAPI:
     app.include_router(cases.router)
     app.include_router(audit.router)
     app.include_router(telemetry.router)
+    app.include_router(correlation.router)
 
     @app.get("/", include_in_schema=False)
     def root() -> dict[str, str]:

@@ -128,3 +128,84 @@ class TelemetryEventRow(Base):
     signature_verified: Mapped[bool] = mapped_column(nullable=False)
     identity_status: Mapped[str] = mapped_column(Text, nullable=False)
     received_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), nullable=False)
+
+
+class CorrelationRunRow(Base):
+    __tablename__ = "correlation_runs"
+
+    id: Mapped[UUID] = mapped_column(PG_UUID(as_uuid=True), primary_key=True)
+    target_id: Mapped[UUID] = mapped_column(
+        PG_UUID(as_uuid=True),
+        ForeignKey("targets.id"),
+        nullable=False,
+    )
+    window_seconds: Mapped[int] = mapped_column(Integer, nullable=False)
+    event_count: Mapped[int] = mapped_column(Integer, nullable=False)
+    link_count: Mapped[int] = mapped_column(Integer, nullable=False)
+    finding_count: Mapped[int] = mapped_column(Integer, nullable=False)
+    risk_score: Mapped[int] = mapped_column(Integer, nullable=False)
+    risk_factors: Mapped[list[Any]] = mapped_column(JSONB, nullable=False)
+    formula: Mapped[str] = mapped_column(Text, nullable=False)
+    actor: Mapped[str] = mapped_column(Text, nullable=False)
+    created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), nullable=False)
+
+
+class CorrelationLinkRow(Base):
+    __tablename__ = "correlation_links"
+
+    id: Mapped[UUID] = mapped_column(PG_UUID(as_uuid=True), primary_key=True)
+    run_id: Mapped[UUID] = mapped_column(
+        PG_UUID(as_uuid=True),
+        ForeignKey("correlation_runs.id"),
+        nullable=False,
+    )
+    target_id: Mapped[UUID] = mapped_column(
+        PG_UUID(as_uuid=True),
+        ForeignKey("targets.id"),
+        nullable=False,
+    )
+    rule_id: Mapped[str] = mapped_column(Text, nullable=False)
+    left_event_id: Mapped[UUID] = mapped_column(PG_UUID(as_uuid=True), nullable=False)
+    right_event_id: Mapped[UUID] = mapped_column(PG_UUID(as_uuid=True), nullable=False)
+    agent_id: Mapped[UUID] = mapped_column(PG_UUID(as_uuid=True), nullable=False)
+    boot_id: Mapped[UUID] = mapped_column(PG_UUID(as_uuid=True), nullable=False)
+    process_pid: Mapped[int | None] = mapped_column(Integer, nullable=True)
+    process_start_ticks: Mapped[int | None] = mapped_column(nullable=True)
+    window_seconds: Mapped[int] = mapped_column(Integer, nullable=False)
+    reason: Mapped[str] = mapped_column(Text, nullable=False)
+    left_observed_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), nullable=False)
+    right_observed_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), nullable=False)
+
+
+class FindingRow(Base):
+    __tablename__ = "findings"
+
+    id: Mapped[UUID] = mapped_column(PG_UUID(as_uuid=True), primary_key=True)
+    fingerprint: Mapped[str] = mapped_column(Text, nullable=False, unique=True)
+    target_id: Mapped[UUID] = mapped_column(
+        PG_UUID(as_uuid=True),
+        ForeignKey("targets.id"),
+        nullable=False,
+    )
+    agent_id: Mapped[UUID] = mapped_column(PG_UUID(as_uuid=True), nullable=False)
+    boot_id: Mapped[UUID] = mapped_column(PG_UUID(as_uuid=True), nullable=False)
+    finding_type: Mapped[str] = mapped_column(Text, nullable=False)
+    severity: Mapped[str] = mapped_column(Text, nullable=False)
+    evidence_strength: Mapped[str] = mapped_column(Text, nullable=False)
+    confidence: Mapped[float] = mapped_column(nullable=False)
+    epistemic_status: Mapped[str] = mapped_column(Text, nullable=False)
+    supporting_event_ids: Mapped[list[Any]] = mapped_column(JSONB, nullable=False)
+    explanation: Mapped[str] = mapped_column(Text, nullable=False)
+    rules_triggered: Mapped[list[Any]] = mapped_column(JSONB, nullable=False)
+    missing_evidence: Mapped[list[Any]] = mapped_column(JSONB, nullable=False)
+    risk_contribution: Mapped[int] = mapped_column(Integer, nullable=False)
+    risk_factors: Mapped[list[Any]] = mapped_column(JSONB, nullable=False)
+    subject_key: Mapped[str] = mapped_column(Text, nullable=False)
+    window_seconds: Mapped[int] = mapped_column(Integer, nullable=False)
+    last_run_id: Mapped[UUID] = mapped_column(
+        PG_UUID(as_uuid=True),
+        ForeignKey("correlation_runs.id"),
+        nullable=False,
+    )
+    created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), nullable=False)
+    updated_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), nullable=False)

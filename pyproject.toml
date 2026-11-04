@@ -43,6 +43,7 @@ pythonpath = [
     "packages/cases/src",
     "packages/telemetry/src",
     "packages/agent/src",
+    "packages/correlation/src",
     "apps/api/src",
 ]
 

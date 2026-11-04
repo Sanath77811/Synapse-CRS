@@ -21,9 +21,10 @@ FastAPI  ---- PostgreSQL
   +-- packages/audit
   +-- packages/telemetry
   +-- packages/agent
+  +-- packages/correlation
 ```
 
-Enrolled agents may POST signed telemetry to `/api/v1/telemetry/ingest`. The Linux collector in `packages/agent` polls procfs and uses that endpoint. There is no evidence runner, model client, solver, or mitigation executor.
+Enrolled agents may POST signed telemetry to `/api/v1/telemetry/ingest`. The Linux collector in `packages/agent` polls procfs and uses that endpoint. `packages/correlation` links stored enrolled evidence into explainable findings. There is no evidence runner, model client, solver, or mitigation executor.
 
 ## Request path
 
@@ -64,6 +65,9 @@ AUTHORIZED_TARGET
 | `audit_chain_state` | Next sequence and head hash | Update of the single bookkeeping row |
 | `agents` | Enrolled agent identity, public key, target binding | Insert and enrollment-lifecycle update |
 | `telemetry_events` | Signed telemetry evidence | Insert only |
+| `correlation_runs` | Correlation execution records | Insert |
+| `correlation_links` | Derived event relationships | Insert |
+| `findings` | Deduplicated explainable findings | Insert and update of derived fields |
 
 The API does not expose delete routes for these tables.
 

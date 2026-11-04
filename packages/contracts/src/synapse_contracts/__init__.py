@@ -11,6 +11,15 @@ from synapse_contracts.cases import (
     CaseView,
     TransitionView,
 )
+from synapse_contracts.correlation import (
+    CorrelationLinkPage,
+    CorrelationLinkView,
+    CorrelationRunRequest,
+    CorrelationRunView,
+    FindingPage,
+    FindingView,
+    RiskSummaryView,
+)
 from synapse_contracts.errors import ErrorBody, ErrorResponse
 from synapse_contracts.targets import (
     AuthorizationStatus,
@@ -41,6 +50,13 @@ __all__ = [
     "CaseTransitionRequest",
     "CaseView",
     "ChainVerificationView",
+    "CorrelationLinkPage",
+    "CorrelationLinkView",
+    "CorrelationRunRequest",
+    "CorrelationRunView",
+    "FindingPage",
+    "FindingView",
+    "RiskSummaryView",
     "EligibilityView",
     "ErrorBody",
     "ErrorResponse",
