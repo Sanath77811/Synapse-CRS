@@ -21,6 +21,7 @@ from synapse_contracts.targets import (
     TargetScope,
     TargetView,
 )
+from synapse_contracts.telemetry_ingest import TelemetryIngestRequest, TelemetryIngestView
 from synapse_contracts.version import API_VERSION, CONTRACT_VERSION
 
 __all__ = [
@@ -47,5 +48,7 @@ __all__ = [
     "TargetPage",
     "TargetScope",
     "TargetView",
+    "TelemetryIngestRequest",
+    "TelemetryIngestView",
     "TransitionView",
 ]

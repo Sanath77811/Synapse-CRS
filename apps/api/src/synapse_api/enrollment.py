@@ -78,6 +78,11 @@ def _agent_view(row: AgentRow) -> AgentView:
     )
 
 
+def registered_agent(session: Session, agent_id: UUID) -> AgentRow | None:
+    """Lock the agent row if it exists. Does not decide eligibility."""
+    return _lock_agent(session, agent_id)
+
+
 def _lock_agent(session: Session, agent_id: UUID) -> AgentRow | None:
     return session.execute(
         select(AgentRow)

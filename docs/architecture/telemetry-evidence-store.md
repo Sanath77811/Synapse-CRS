@@ -8,7 +8,7 @@ Three facts stay distinct:
 2. Ed25519 verification succeeded for the supplied public key (`signature_verified = true`).
 3. Agent identity is **server-derived**. Unknown agents store `identity_status = unverified`. Enrolled, target-authorized agents store `enrolled`. Other identity failures reject the insert. Callers cannot supply this field. See [agent-enrollment.md](agent-enrollment.md).
 
-This module does not collect `/proc`, ingest over HTTP, or write raw observations.
+The persistence function does not collect `/proc` or speak HTTP. Network ingest is a separate API that calls this function after enrollment checks. See [telemetry-ingestion-api.md](telemetry-ingestion-api.md).
 
 ## Table
 

@@ -21,7 +21,7 @@ FastAPI  ---- PostgreSQL
   +-- packages/audit
 ```
 
-There is no agent, telemetry bus, evidence runner, model client, solver, or mitigation executor in this version.
+Enrolled agents may POST signed telemetry to `/api/v1/telemetry/ingest`. There is no collector, evidence runner, model client, solver, or mitigation executor.
 
 ## Request path
 
