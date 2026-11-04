@@ -135,9 +135,10 @@ def reset_tables(migration_url: str) -> None:
     engine = create_engine(migration_url)
     with engine.begin() as connection:
         connection.execute(text("ALTER TABLE audit_events DISABLE TRIGGER USER"))
+        connection.execute(text("ALTER TABLE telemetry_events DISABLE TRIGGER USER"))
         connection.execute(
             text(
-                "TRUNCATE TABLE audit_events, case_transitions, cases, targets "
+                "TRUNCATE TABLE telemetry_events, audit_events, case_transitions, cases, targets "
                 "RESTART IDENTITY CASCADE"
             )
         )
@@ -147,6 +148,7 @@ def reset_tables(migration_url: str) -> None:
             ),
             {"genesis": GENESIS_HASH},
         )
+        connection.execute(text("ALTER TABLE telemetry_events ENABLE TRIGGER USER"))
         connection.execute(text("ALTER TABLE audit_events ENABLE TRIGGER USER"))
     engine.dispose()
 

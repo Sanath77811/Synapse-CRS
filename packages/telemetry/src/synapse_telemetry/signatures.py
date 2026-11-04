@@ -10,6 +10,7 @@ The signature itself is not a field of the Phase 1 envelope.
 """
 
 import base64
+import hashlib
 import re
 from collections.abc import Mapping
 
@@ -84,6 +85,12 @@ class VerificationKey:
         except ValueError:
             raise SignatureError("telemetry verification key is invalid") from None
         return cls(public)
+
+
+def public_key_fingerprint(key: VerificationKey) -> str:
+    """Return a SHA-256 fingerprint of the 32-byte public key."""
+    digest = hashlib.sha256(key.raw_bytes()).hexdigest()
+    return f"sha256:{digest}"
 
 
 def generate_signing_key() -> SigningKey:

@@ -42,6 +42,7 @@ from synapse_telemetry.signatures import (
     SigningKey,
     VerificationKey,
     generate_signing_key,
+    public_key_fingerprint,
     sign_event,
     verify_event,
 )
@@ -79,6 +80,7 @@ __all__ = [
     "normalize_observation",
     "normalize_process_exited",
     "normalize_process_started",
+    "public_key_fingerprint",
     "sign_event",
     "verify_event",
 ]

@@ -22,6 +22,7 @@ Copy `.env.example` to `.env` and fill it in before Compose or pytest. See the R
 | `make api` | Run uvicorn on `127.0.0.1:8000` using the host `.env` |
 | `make migrate` | Apply Alembic migrations with `MIGRATION_DATABASE_URL` or `DATABASE_URL` |
 | `make demo` | Run the offline telemetry security demonstrator |
+| `make demo-persist` | Persist a verified synthetic event in PostgreSQL |
 
 `make api` and `make migrate` read `.env` directly. Do not `source .env` in a shell: the token JSON can be altered by the shell parser. pytest also loads `.env` when the variables are unset.
 

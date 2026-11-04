@@ -88,3 +88,24 @@ class AuditEventRow(Base):
     payload: Mapped[dict[str, Any]] = mapped_column(JSONB, nullable=False)
     previous_event_hash: Mapped[str] = mapped_column(Text, nullable=False)
     event_hash: Mapped[str] = mapped_column(Text, nullable=False, unique=True)
+
+
+class TelemetryEventRow(Base):
+    __tablename__ = "telemetry_events"
+
+    id: Mapped[UUID] = mapped_column(PG_UUID(as_uuid=True), primary_key=True)
+    event_id: Mapped[UUID] = mapped_column(PG_UUID(as_uuid=True), nullable=False, unique=True)
+    target_id: Mapped[UUID] = mapped_column(PG_UUID(as_uuid=True), nullable=False)
+    agent_id: Mapped[UUID] = mapped_column(PG_UUID(as_uuid=True), nullable=False)
+    boot_id: Mapped[UUID] = mapped_column(PG_UUID(as_uuid=True), nullable=False)
+    event_type: Mapped[str] = mapped_column(Text, nullable=False)
+    sequence: Mapped[int] = mapped_column(nullable=False)
+    observed_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), nullable=False)
+    schema_version: Mapped[str] = mapped_column(Text, nullable=False)
+    envelope: Mapped[dict[str, Any]] = mapped_column(JSONB, nullable=False)
+    signature: Mapped[str] = mapped_column(Text, nullable=False)
+    public_key_hex: Mapped[str] = mapped_column(Text, nullable=False)
+    public_key_fingerprint: Mapped[str] = mapped_column(Text, nullable=False)
+    signature_verified: Mapped[bool] = mapped_column(nullable=False)
+    identity_status: Mapped[str] = mapped_column(Text, nullable=False)
+    received_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), nullable=False)
