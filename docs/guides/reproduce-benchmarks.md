@@ -34,3 +34,5 @@ Experiment ID, dataset name/version/checksum, feature schema, model and rule ver
 ## What this is not
 
 A rerun of `make research-eval` without CIC files does not produce CIC-IDS2017 detection rates. Synthetic accuracy is not enterprise performance.
+
+Phase 11 is a separate command: [reproduce-phase11.md](reproduce-phase11.md). It does not overwrite Phase 10 JSON.

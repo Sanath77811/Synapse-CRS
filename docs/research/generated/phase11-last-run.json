@@ -1,0 +1,145 @@
+{
+  "experiment_id": "phase11-flow-benchmark-v1",
+  "phase11_version": "0.8.0",
+  "cicids2017_evaluated": false,
+  "evaluated": false,
+  "mode": "external",
+  "blocker": "CIC-IDS2017 is not present. Set SYNAPSE_CICIDS_CSV to a local CSV. This command does not download the corpus and does not fall back to fixtures.",
+  "manifest": {
+    "name": "cicids2017",
+    "version": "not_present",
+    "source": "https://www.unb.ca/cic/datasets/ids-2017.html",
+    "citation": "Iman Sharafaldin, Arash Habibi Lashkari, and Ali A. Ghorbani, \"Toward Generating a New Intrusion Detection Dataset and Intrusion Traffic Characterization\", 4th International Conference on Information Systems Security and Privacy (ICISSP), Portugal, January 2018.",
+    "license_notes": "Operators must review the Canadian Institute for Cybersecurity terms before download. This repository does not redistribute the corpus.",
+    "path": "",
+    "sha256": "",
+    "file_size_bytes": 0,
+    "row_count": 0,
+    "excluded_count": 0,
+    "excluded_reasons": {},
+    "columns": [],
+    "numeric_columns": [],
+    "label_column": "Label",
+    "label_counts": {},
+    "category_counts": {},
+    "missing_value_counts": {},
+    "duplicate_record_count": 0,
+    "timestamp_min": null,
+    "timestamp_max": null,
+    "feature_exclusions": {
+      "Flow ID": "Record identifier; can leak duplicates across splits.",
+      "Source IP": "Capture-host artifact; not a portable flow statistic.",
+      "Destination IP": "Capture-host artifact; not a portable flow statistic.",
+      "Source Port": "Ephemeral client port; can group sessions unrealistically.",
+      "Timestamp": "Used only for temporal splitting, never as a model feature.",
+      "Label": "Target, not a predictor."
+    },
+    "known_limitations": [
+      "Flow records are not Linux process telemetry.",
+      "Public reports document label noise, duplicate flows, and extreme/Inf values.",
+      "Timestamp and IP fields can leak capture-session structure.",
+      "Class distribution is heavily imbalanced toward BENIGN.",
+      "A single CSV sample is not the full week-long corpus."
+    ],
+    "unavailable_until_inspected": [
+      "file hashes",
+      "exact row counts",
+      "per-file class histograms",
+      "timestamp coverage of the operator copy"
+    ],
+    "processing": {},
+    "available": false,
+    "dataset_class": "external_flow_benchmark",
+    "notes": "CIC-IDS2017 is not present. Set SYNAPSE_CICIDS_CSV to a local CSV. This command does not download the corpus and does not fall back to fixtures.",
+    "verified": {}
+  },
+  "models": [],
+  "phase10_preserved_findings": {
+    "available": true,
+    "experiment_id": "phase10-research-validation-v1",
+    "dataset": "synthetic_labelled_reconstructions_v1",
+    "dataset_class": "synthetic_lab",
+    "findings_must_not_be_rewritten": [
+      "Correlation, symbolic and hybrid three-class accuracy matched on 12 fixtures.",
+      "Hybrid did not outperform simpler approaches on that synthetic set.",
+      "Isolation Forest failed unusual-volume reconstructions (F1 0.0).",
+      "Prediction equalled persistence.",
+      "CIC-IDS2017 was not evaluated in Phase 10."
+    ],
+    "three_class_accuracy": {
+      "A_deterministic_correlation": 1.0,
+      "B_neural_only": 0.3333,
+      "C_symbolic_only": 1.0,
+      "D_hybrid": 1.0,
+      "E_neural_plus_symbolic": 1.0,
+      "E_hybrid_without_evidence_quality": 1.0
+    },
+    "neural_holdout_f1": 0.0,
+    "prediction_advantage": false,
+    "cicids_available_in_phase10": false
+  },
+  "capability_matrix": [
+    {
+      "capability": "Flow classification",
+      "cicids2017": "Evaluate when files are present",
+      "linux_agent_lab": "Not applicable",
+      "synthetic_fixtures": "Controlled protocol tests"
+    },
+    {
+      "capability": "Process lifecycle",
+      "cicids2017": "Not available",
+      "linux_agent_lab": "Evaluate",
+      "synthetic_fixtures": "Controlled tests (Phase 10)"
+    },
+    {
+      "capability": "PID reuse",
+      "cicids2017": "Not available",
+      "linux_agent_lab": "Evaluate",
+      "synthetic_fixtures": "Controlled tests (Phase 10)"
+    },
+    {
+      "capability": "Process-network attribution",
+      "cicids2017": "Not available",
+      "linux_agent_lab": "Evaluate",
+      "synthetic_fixtures": "Controlled tests (Phase 10)"
+    },
+    {
+      "capability": "Flow explanation",
+      "cicids2017": "Evaluate when files are present",
+      "linux_agent_lab": "Only if flow evidence exists",
+      "synthetic_fixtures": "Controlled tests"
+    },
+    {
+      "capability": "Endpoint reconstruction",
+      "cicids2017": "Not available directly",
+      "linux_agent_lab": "Evaluate",
+      "synthetic_fixtures": "Controlled tests (Phase 10)"
+    },
+    {
+      "capability": "Agent identity / Ed25519",
+      "cicids2017": "Not available",
+      "linux_agent_lab": "Evaluate",
+      "synthetic_fixtures": "Not a substitute for enrollment"
+    },
+    {
+      "capability": "Phase 9 hybrid on flows",
+      "cicids2017": "Not comparable",
+      "linux_agent_lab": "Evaluate on reconstructions",
+      "synthetic_fixtures": "Phase 10 synthetic reconstructions"
+    },
+    {
+      "capability": "Z3 policy checks",
+      "cicids2017": "Not a dataset metric",
+      "linux_agent_lab": "Policy tests",
+      "synthetic_fixtures": "Policy tests"
+    }
+  ],
+  "notes": "No CIC-IDS2017 metrics were generated. Synthetic fixtures were not substituted for the missing corpus.",
+  "software": {
+    "python": "3.12.3",
+    "platform": "Linux-6.12.94+-x86_64-with-glibc2.39",
+    "sklearn": "1.9.1"
+  },
+  "started_at": "2026-11-04T14:18:19.499363+00:00",
+  "ended_at": "2026-11-04T14:18:19.499375+00:00"
+}

@@ -35,4 +35,6 @@ H1 normal, H2 unusual legitimate, H3 suspicious pattern, H4 insufficient evidenc
 | LLM explanations | Not implemented |
 | CIC-IDS or other public IDS datasets | Adapter implemented; dataset not bundled; features not comparable to process telemetry |
 | Research experiments A–E | Implemented on synthetic labelled reconstructions |
-| Enterprise / CIC-IDS detection rates | Not evaluated |
+| Enterprise / CIC-IDS detection rates | Not evaluated unless operator CSV present (Phase 11) |
+| Phase 11 flow-benchmark track | Implemented; fails closed without CIC-IDS2017 |
+| Phase 9 hybrid on CIC-IDS2017 flows | Not comparable |

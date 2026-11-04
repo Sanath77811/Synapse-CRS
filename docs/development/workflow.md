@@ -24,6 +24,7 @@ Copy `.env.example` to `.env` and fill it in before Compose or pytest. See the R
 | `make demo` | Run the offline telemetry security demonstrator |
 | `make demo-persist` | Persist a verified synthetic event in PostgreSQL |
 | `make research-eval` | Run the Phase 10 synthetic research harness and write reports |
+| `make research-eval-phase11` | Run the Phase 11 flow benchmark (exit 2 if CIC-IDS2017 is absent) |
 
 `make api` and `make migrate` read `.env` directly. Do not `source .env` in a shell: the token JSON can be altered by the shell parser. pytest also loads `.env` when the variables are unset.
 
