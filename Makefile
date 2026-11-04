@@ -1,7 +1,7 @@
-PYTHONPATH := packages/contracts/src:packages/policy/src:packages/audit/src:packages/cases/src:apps/api/src
+PYTHONPATH := packages/contracts/src:packages/policy/src:packages/audit/src:packages/cases/src:packages/telemetry/src:apps/api/src
 export PYTHONPATH
 
-.PHONY: install test lint format api migrate
+.PHONY: install test lint format api migrate demo
 
 install:
 	python3 -m venv .venv
@@ -24,3 +24,6 @@ api:
 
 migrate:
 	.venv/bin/alembic -c apps/api/alembic.ini upgrade head
+
+demo:
+	.venv/bin/python -m synapse_telemetry.demo

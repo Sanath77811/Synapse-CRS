@@ -492,6 +492,9 @@ def test_package_has_no_host_network_or_database_io() -> None:
     assert sorted(path.name for path in python_files) == [
         "__init__.py",
         "canonical.py",
+        "demo.py",
+        "demo_data.py",
+        "demo_runner.py",
         "envelope.py",
         "signatures.py",
     ]
