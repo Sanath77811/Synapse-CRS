@@ -96,7 +96,7 @@ python3 -m venv .venv
 .venv/bin/ruff format --check .
 ```
 
-`make install`, `make test`, `make lint`, `make demo-agent`, `make demo-correlation`, `make demo-reasoning`, `make research-eval`, and `make research-eval-phase11` wrap common commands. Reasoning is documented in [docs/guides/reasoning-demo.md](docs/guides/reasoning-demo.md). Benchmark reproduction is documented in [docs/guides/reproduce-benchmarks.md](docs/guides/reproduce-benchmarks.md). pytest, the API, and Alembic read `.env` directly and then point the test suite at `synapse_test` so it does not truncate the development database. Do not `source .env`; a shell will mangle the token JSON.
+`make install`, `make test`, `make lint`, `make demo-agent`, `make demo-correlation`, `make demo-reasoning`, `make research-eval`, `make research-eval-phase11`, and `make research-eval-phase12` wrap common commands. Reasoning is documented in [docs/guides/reasoning-demo.md](docs/guides/reasoning-demo.md). Benchmark reproduction is documented in [docs/guides/reproduce-benchmarks.md](docs/guides/reproduce-benchmarks.md). pytest, the API, and Alembic read `.env` directly and then point the test suite at `synapse_test` so it does not truncate the development database. Do not `source .env`; a shell will mangle the token JSON.
 
 Status page:
 

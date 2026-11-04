@@ -49,3 +49,5 @@ v0.1 has no command API, no shell integration, and no client that connects to a 
 Phase 10 measures hybrid components on constructed synthetic reconstructions. Those metrics are not enterprise detection rates and are not CIC-IDS2017 results unless an operator-supplied CSV is parsed as an external benchmark. Benchmark rows are not enrolled Linux telemetry.
 
 Phase 11 evaluates a flow-only protocol when CIC-IDS2017 is supplied. If the corpus is missing, the Phase 11 command fails closed and does not invent CIC-IDS2017 scores. The Phase 9 hybrid is not comparable on flow records.
+
+Phase 12 discovers independent endpoint datasets and can reconstruct DMBD-like process rows when JSONL is supplied. If DMBD/WinMET/OpTC files are missing, the Phase 12 command fails closed. Sample-level labels are not event-level ground truth. Windows process hashes are not rewritten into Linux boot identities.

@@ -38,3 +38,5 @@ H1 normal, H2 unusual legitimate, H3 suspicious pattern, H4 insufficient evidenc
 | Enterprise / CIC-IDS detection rates | Not evaluated unless operator CSV present (Phase 11) |
 | Phase 11 flow-benchmark track | Implemented; fails closed without CIC-IDS2017 |
 | Phase 9 hybrid on CIC-IDS2017 flows | Not comparable |
+| Phase 12 endpoint adapter | Implemented; DMBD/WinMET/OpTC not evaluated in this checkout |
+| Phase 9 hybrid on DMBD pid_hash | Not comparable |

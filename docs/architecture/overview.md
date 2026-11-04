@@ -26,7 +26,7 @@ FastAPI  ---- PostgreSQL
   +-- packages/validation
 ```
 
-Enrolled agents may POST signed telemetry to `/api/v1/telemetry/ingest`. The Linux collector in `packages/agent` polls procfs and uses that endpoint. `packages/correlation` links stored enrolled evidence into explainable findings. `packages/reasoning` reconstructs timelines, scores a synthetic Isolation Forest baseline, evaluates inspectable rules, and Z3-checks recommendation records. `packages/validation` runs offline research experiments (Phase 10 synthetic reconstructions and Phase 11 flow benchmarks); it does not write benchmark rows into `telemetry_events`. There is no mitigation executor.
+Enrolled agents may POST signed telemetry to `/api/v1/telemetry/ingest`. The Linux collector in `packages/agent` polls procfs and uses that endpoint. `packages/correlation` links stored enrolled evidence into explainable findings. `packages/reasoning` reconstructs timelines, scores a synthetic Isolation Forest baseline, evaluates inspectable rules, and Z3-checks recommendation records. `packages/validation` runs offline research experiments (Phase 10 synthetic reconstructions, Phase 11 flow benchmarks, Phase 12 endpoint adapters); it does not write benchmark rows into `telemetry_events`. There is no mitigation executor.
 
 ## Request path
 
