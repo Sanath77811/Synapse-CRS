@@ -22,9 +22,10 @@ FastAPI  ---- PostgreSQL
   +-- packages/telemetry
   +-- packages/agent
   +-- packages/correlation
+  +-- packages/reasoning
 ```
 
-Enrolled agents may POST signed telemetry to `/api/v1/telemetry/ingest`. The Linux collector in `packages/agent` polls procfs and uses that endpoint. `packages/correlation` links stored enrolled evidence into explainable findings. There is no evidence runner, model client, solver, or mitigation executor.
+Enrolled agents may POST signed telemetry to `/api/v1/telemetry/ingest`. The Linux collector in `packages/agent` polls procfs and uses that endpoint. `packages/correlation` links stored enrolled evidence into explainable findings. `packages/reasoning` reconstructs timelines, scores a synthetic Isolation Forest baseline, evaluates inspectable rules, and Z3-checks recommendation records. There is no mitigation executor.
 
 ## Request path
 

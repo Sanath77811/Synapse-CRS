@@ -18,7 +18,7 @@ The short project statement above is the goal. It is not a description of what t
 - Append-only audit events with a SHA-256 hash chain.
 - Bearer-token authentication and an admin/viewer role split.
 - pytest suite, ruff, Docker Compose, and GitHub Actions.
-- Telemetry observation contract 1.0.0, allowlist redaction, Ed25519 signing, PostgreSQL evidence store, administrator agent enrollment, HTTP ingest, a Linux procfs collector, and deterministic evidence correlation. See [docs/architecture/evidence-correlation.md](docs/architecture/evidence-correlation.md).
+- Telemetry observation contract 1.0.0, allowlist redaction, Ed25519 signing, PostgreSQL evidence store, administrator agent enrollment, HTTP ingest, a Linux procfs collector, deterministic evidence correlation, and a hybrid reasoning foundation (reconstruction, Isolation Forest baseline, symbolic rules, Z3-checked recommendations). See [docs/architecture/hybrid-reasoning.md](docs/architecture/hybrid-reasoning.md).
 
 ## Explicit non-goals of v0.1
 
@@ -41,6 +41,7 @@ packages/audit     Hash-chain helpers
 packages/telemetry Observation contracts, Ed25519 signatures, offline demo
 packages/agent     Linux procfs collector and ingest client
 packages/correlation Deterministic evidence correlation and findings
+packages/reasoning Hybrid reconstruction, neural baseline, Z3 policy checks
 frontend/          Minimal React status page
 agent/             Pointer to the Linux collector package
 schemas/           JSON Schema 2020-12 contracts, version 1.0.0
@@ -94,7 +95,7 @@ python3 -m venv .venv
 .venv/bin/ruff format --check .
 ```
 
-`make install`, `make test`, `make lint`, `make demo-agent`, and `make demo-correlation` wrap common commands. The Linux collector demo is documented in [docs/guides/linux-agent-demo.md](docs/guides/linux-agent-demo.md). Correlation is documented in [docs/guides/correlation-demo.md](docs/guides/correlation-demo.md). pytest, the API, and Alembic read `.env` directly and then point the test suite at `synapse_test` so it does not truncate the development database. Do not `source .env`; a shell will mangle the token JSON.
+`make install`, `make test`, `make lint`, `make demo-agent`, `make demo-correlation`, and `make demo-reasoning` wrap common commands. Reasoning is documented in [docs/guides/reasoning-demo.md](docs/guides/reasoning-demo.md). pytest, the API, and Alembic read `.env` directly and then point the test suite at `synapse_test` so it does not truncate the development database. Do not `source .env`; a shell will mangle the token JSON.
 
 Status page:
 

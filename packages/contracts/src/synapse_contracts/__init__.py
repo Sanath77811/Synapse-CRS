@@ -21,6 +21,11 @@ from synapse_contracts.correlation import (
     RiskSummaryView,
 )
 from synapse_contracts.errors import ErrorBody, ErrorResponse
+from synapse_contracts.reasoning import (
+    AssessmentPage,
+    ReasoningAssessmentView,
+    ReasoningRunRequest,
+)
 from synapse_contracts.targets import (
     AuthorizationStatus,
     Capability,
@@ -57,6 +62,9 @@ __all__ = [
     "FindingPage",
     "FindingView",
     "RiskSummaryView",
+    "AssessmentPage",
+    "ReasoningAssessmentView",
+    "ReasoningRunRequest",
     "EligibilityView",
     "ErrorBody",
     "ErrorResponse",

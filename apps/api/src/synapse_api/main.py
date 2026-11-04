@@ -10,7 +10,16 @@ from synapse_contracts.version import API_VERSION
 from synapse_api.config import get_settings
 from synapse_api.errors import register_exception_handlers
 from synapse_api.limits import RequestGuardMiddleware
-from synapse_api.routers import agents, audit, cases, correlation, health, targets, telemetry
+from synapse_api.routers import (
+    agents,
+    audit,
+    cases,
+    correlation,
+    health,
+    reasoning,
+    targets,
+    telemetry,
+)
 
 logger = logging.getLogger("synapse.api")
 
@@ -64,6 +73,7 @@ def create_app() -> FastAPI:
     app.include_router(audit.router)
     app.include_router(telemetry.router)
     app.include_router(correlation.router)
+    app.include_router(reasoning.router)
 
     @app.get("/", include_in_schema=False)
     def root() -> dict[str, str]:

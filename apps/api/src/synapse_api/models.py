@@ -209,3 +209,59 @@ class FindingRow(Base):
     )
     created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), nullable=False)
     updated_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), nullable=False)
+
+
+class ReasoningReconstructionRow(Base):
+    __tablename__ = "reasoning_reconstructions"
+
+    id: Mapped[UUID] = mapped_column(PG_UUID(as_uuid=True), primary_key=True)
+    target_id: Mapped[UUID] = mapped_column(
+        PG_UUID(as_uuid=True), ForeignKey("targets.id"), nullable=False
+    )
+    dataset_label: Mapped[str] = mapped_column(Text, nullable=False)
+    event_ids: Mapped[list[Any]] = mapped_column(JSONB, nullable=False)
+    quality: Mapped[dict[str, Any]] = mapped_column(JSONB, nullable=False)
+    timeline: Mapped[list[Any]] = mapped_column(JSONB, nullable=False)
+    process_count: Mapped[int] = mapped_column(Integer, nullable=False)
+    graph_nodes: Mapped[int] = mapped_column(Integer, nullable=False)
+    graph_edges: Mapped[int] = mapped_column(Integer, nullable=False)
+    missing_evidence: Mapped[list[Any]] = mapped_column(JSONB, nullable=False)
+    created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), nullable=False)
+
+
+class ReasoningAssessmentRow(Base):
+    __tablename__ = "reasoning_assessments"
+
+    id: Mapped[UUID] = mapped_column(PG_UUID(as_uuid=True), primary_key=True)
+    fingerprint: Mapped[str] = mapped_column(Text, nullable=False, unique=True)
+    target_id: Mapped[UUID] = mapped_column(
+        PG_UUID(as_uuid=True), ForeignKey("targets.id"), nullable=False
+    )
+    reconstruction_id: Mapped[UUID] = mapped_column(
+        PG_UUID(as_uuid=True), ForeignKey("reasoning_reconstructions.id"), nullable=False
+    )
+    engine_version: Mapped[str] = mapped_column(Text, nullable=False)
+    dataset_label: Mapped[str] = mapped_column(Text, nullable=False)
+    selected_hypothesis: Mapped[str] = mapped_column(Text, nullable=False)
+    confidence: Mapped[float] = mapped_column(nullable=False)
+    severity: Mapped[str] = mapped_column(Text, nullable=False)
+    body: Mapped[dict[str, Any]] = mapped_column(JSONB, nullable=False)
+    created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), nullable=False)
+    updated_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), nullable=False)
+
+
+class ReasoningProposalRow(Base):
+    __tablename__ = "reasoning_proposals"
+
+    id: Mapped[UUID] = mapped_column(PG_UUID(as_uuid=True), primary_key=True)
+    assessment_id: Mapped[UUID] = mapped_column(
+        PG_UUID(as_uuid=True), ForeignKey("reasoning_assessments.id"), nullable=False
+    )
+    target_id: Mapped[UUID] = mapped_column(
+        PG_UUID(as_uuid=True), ForeignKey("targets.id"), nullable=False
+    )
+    kind: Mapped[str] = mapped_column(Text, nullable=False)
+    verification_status: Mapped[str] = mapped_column(Text, nullable=False)
+    solver_result: Mapped[str] = mapped_column(Text, nullable=False)
+    body: Mapped[dict[str, Any]] = mapped_column(JSONB, nullable=False)
+    created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), nullable=False)
