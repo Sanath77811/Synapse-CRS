@@ -26,6 +26,7 @@ Copy `.env.example` to `.env` and fill it in before Compose or pytest. See the R
 | `make research-eval` | Run the Phase 10 synthetic research harness and write reports |
 | `make research-eval-phase11` | Run the Phase 11 flow benchmark (exit 2 if CIC-IDS2017 is absent) |
 | `make research-eval-phase12` | Run the Phase 12 endpoint track (exit 2 if DMBD JSONL is absent) |
+| `make research-eval-phase13` | Run the Phase 13 independent-evidence track (exit 2 if process JSONL is absent) |
 
 `make api` and `make migrate` read `.env` directly. Do not `source .env` in a shell: the token JSON can be altered by the shell parser. pytest also loads `.env` when the variables are unset.
 

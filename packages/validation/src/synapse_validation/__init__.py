@@ -5,7 +5,7 @@ not bundled. Experiments on synthetic lab reconstructions are labelled
 synthetic.
 """
 
-VALIDATION_VERSION = "0.9.0"
+VALIDATION_VERSION = "0.10.0"
 FEATURE_SCHEMA = "1.0.0"
 
 __all__ = ["FEATURE_SCHEMA", "VALIDATION_VERSION"]

@@ -1,0 +1,297 @@
+{
+  "experiment_id": "phase13-independent-evidence-v1",
+  "phase13_version": "0.10.0",
+  "feature_schema": "sample_features_v13.1.0",
+  "dmbd_process_trees_evaluated": false,
+  "dmbd_labels_inspected": true,
+  "winmet_evaluated": false,
+  "optc_evaluated": false,
+  "independent_endpoint_validation_completed": false,
+  "scientific_completion": false,
+  "blocker": "No independent endpoint process dataset is present. Set SYNAPSE_DMBD_JSONL to local DMBD-like process JSONL. trees_*.json were not auto-downloaded (\u22481 GB/shard). Label JSON inspection, if present, is not tree evaluation.",
+  "discovery": {
+    "phase12_candidate_ids": [
+      "dmbd",
+      "winmet",
+      "optc"
+    ],
+    "verified_dmbd_http": {
+      "label_train_url": "https://gdo168.llnl.gov/data/dmbd/truth_labels_train.json",
+      "label_test_url": "https://gdo168.llnl.gov/data/dmbd/truth_labels_test.json",
+      "label_train_content_length": 1979873,
+      "label_test_content_length": 1233522,
+      "trees_0_url": "https://gdo168.llnl.gov/data/dmbd/trees_0.json",
+      "trees_0_content_length": 969100712,
+      "trees_not_downloaded": true,
+      "index": "https://gdo168.llnl.gov/data/dmbd/",
+      "docs": "https://gdo-wintap.llnl.gov/data/newdocs/DMBD/"
+    },
+    "alternatives_considered": [
+      {
+        "id": "ember2018",
+        "name": "EMBER 2018",
+        "official_source": "https://github.com/elastic/ember",
+        "verified_download": false,
+        "reason_skipped": "Static PE feature vectors, not process-creation/termination trees. Unsuitable for reconstruction RQs.",
+        "rank": 99
+      },
+      {
+        "id": "cic-malmem-2022",
+        "name": "CIC-MalMem-2022",
+        "official_source": "https://www.unb.ca/cic/datasets/malmem-2022.html",
+        "verified_download": false,
+        "reason_skipped": "Memory-dump classification features, not host process graphs.",
+        "rank": 98
+      },
+      {
+        "id": "avast-ctu-cape",
+        "name": "Avast-CTU Public CAPEv2 Dataset",
+        "official_source": "https://github.com/avast/avast-ctu-cape-dataset",
+        "verified_download": false,
+        "reason_skipped": "Sandbox reports; size and license not verified in this session; not auto-downloaded.",
+        "rank": 20
+      }
+    ],
+    "ranking": [
+      {
+        "rank": 1,
+        "id": "dmbd",
+        "suitability": "Best documented process identity (pid_hash) plus sample labels. Process trees were not acquired (\u22481 GB/shard).",
+        "evidence_class": "labels_inspected_trees_absent"
+      },
+      {
+        "rank": 2,
+        "id": "winmet",
+        "suitability": "Documented process trees; ~13 GB compressed / ~750 GB unpacked.",
+        "evidence_class": "not_acquired_size"
+      },
+      {
+        "rank": 3,
+        "id": "optc",
+        "suitability": "Enterprise eCar; ~1 TB; contested labels; not acquired.",
+        "evidence_class": "not_acquired_size"
+      },
+      {
+        "rank": 4,
+        "id": "avast-ctu-cape",
+        "suitability": "Possible sandbox trees; unverified locally.",
+        "evidence_class": "not_acquired"
+      }
+    ],
+    "epistemic": {
+      "verified_facts": [
+        "truth_labels_train.json Content-Length 1979873",
+        "truth_labels_test.json Content-Length 1233522",
+        "trees_0.json Content-Length 969100712 via Range"
+      ],
+      "documented_claims": [
+        "DMBD overview 40,000 train / 25,416 test",
+        "WinMET ~13 GB / ~750 GB",
+        "OpTC about 1 TB"
+      ],
+      "inferences": [
+        "trees_*.json pandas shards are too large for the 8 MiB acquisition bound"
+      ],
+      "unknown": [
+        "WinMET exact file list this session (Zenodo API timed out previously)",
+        "OpTC GDrive live file sizes",
+        "LLNL license acceptance status for a given operator"
+      ]
+    }
+  },
+  "verified_dmbd_http": {
+    "label_train_url": "https://gdo168.llnl.gov/data/dmbd/truth_labels_train.json",
+    "label_test_url": "https://gdo168.llnl.gov/data/dmbd/truth_labels_test.json",
+    "label_train_content_length": 1979873,
+    "label_test_content_length": 1233522,
+    "trees_0_url": "https://gdo168.llnl.gov/data/dmbd/trees_0.json",
+    "trees_0_content_length": 969100712,
+    "trees_not_downloaded": true,
+    "index": "https://gdo168.llnl.gov/data/dmbd/",
+    "docs": "https://gdo-wintap.llnl.gov/data/newdocs/DMBD/"
+  },
+  "dmbd_labels": {
+    "available": true,
+    "directory": "synapse-dmbd",
+    "train": {
+      "path": "truth_labels_train.json",
+      "sha256": "76b4f54d187f1eada9266ae578022189dad1ac27d5acdebc34d680609a9a36c2",
+      "file_size_bytes": 1979873,
+      "format": "pandas_orient_columns_experiment_year_label",
+      "sample_count": 40000,
+      "unique_sample_ids": 40000,
+      "label_counts": {
+        "benign": 20000,
+        "malicious": 20000
+      },
+      "year_counts": {
+        "2023": 7343,
+        "2021": 4005,
+        "2017": 15033,
+        "2024": 7004,
+        "2022": 3254,
+        "2020": 2634,
+        "2019": 262,
+        "2018": 178,
+        "2009": 3,
+        "2016": 117,
+        "2014": 43,
+        "2013": 14,
+        "2015": 94,
+        "2012": 4,
+        "2010": 5,
+        "2007": 1,
+        "2011": 4,
+        "2008": 2
+      },
+      "label_scope": "sample",
+      "label_source": "DMBD AV-consensus files as published on gdo168.llnl.gov",
+      "id_prefix_sample": [
+        "E53002",
+        "E30273",
+        "E27878"
+      ],
+      "notes": "These files label experiments/samples, not individual process events. They are not a substitute for trees_*.json process records."
+    },
+    "test": {
+      "path": "truth_labels_test.json",
+      "sha256": "c1152137b62100b3d7abada3b1a77dc3d800b809708eca2a3ad0712f9136f8ff",
+      "file_size_bytes": 1233522,
+      "format": "pandas_orient_columns_experiment_year_label",
+      "sample_count": 24747,
+      "unique_sample_ids": 24747,
+      "label_counts": {
+        "benign": 5249,
+        "malicious": 19498
+      },
+      "year_counts": {
+        "2024": 7615,
+        "2017": 17131,
+        "null": 1
+      },
+      "label_scope": "sample",
+      "label_source": "DMBD AV-consensus files as published on gdo168.llnl.gov",
+      "id_prefix_sample": [
+        "E33423",
+        "E39699",
+        "E16707"
+      ],
+      "notes": "These files label experiments/samples, not individual process events. They are not a substitute for trees_*.json process records."
+    },
+    "split_comparison": {
+      "train_samples": 40000,
+      "test_samples": 24747,
+      "documented_train": 40000,
+      "documented_test": 25416,
+      "train_matches_documented_count": true,
+      "test_matches_documented_count": false,
+      "train_test_id_overlap": 0,
+      "notes": "Overview claimed 25,416 test samples. Verified unique IDs come from the inspected files. Train/test overlap must be zero for a valid split."
+    },
+    "not_process_trees": true,
+    "independent_process_evaluation": false,
+    "notes": "Official DMBD sample labels were inspected. trees_*.json were not loaded. This is not independent endpoint reconstruction or detection."
+  },
+  "feature_definitions": [
+    {
+      "name": "event_count",
+      "derivation": "count of normalized records for the sample",
+      "required": "source_sample_id",
+      "missing": "0"
+    },
+    {
+      "name": "process_count",
+      "derivation": "count of reconstructed process identities",
+      "required": "source_process_id",
+      "missing": "0"
+    },
+    {
+      "name": "orphan_count",
+      "derivation": "parent identity present but not in the sample graph",
+      "required": "source_parent_process_id",
+      "missing": "0"
+    },
+    {
+      "name": "incomplete_lifecycle_count",
+      "derivation": "identities without observed process_term",
+      "required": "process_end_timestamp",
+      "missing": "0"
+    },
+    {
+      "name": "parent_edge_count",
+      "derivation": "nodes whose parent identity is present in the graph",
+      "required": "source_parent_process_id",
+      "missing": "0"
+    },
+    {
+      "name": "network_ref_count",
+      "derivation": "records with observed network_connection_reference",
+      "required": "network_connection_reference",
+      "missing": "0"
+    },
+    {
+      "name": "completeness_ratio",
+      "derivation": "complete identities / process_count",
+      "required": "process start and term",
+      "missing": "0"
+    },
+    {
+      "name": "pid_reuse_flag",
+      "derivation": "1 if two identities share sample and os_pid",
+      "required": "os_pid plus stable identity",
+      "missing": "0"
+    }
+  ],
+  "phase10_preserved": {
+    "available": true,
+    "name": "phase10",
+    "experiment_id": "phase10-research-validation-v1",
+    "must_not_rewrite": true
+  },
+  "phase11_preserved": {
+    "available": true,
+    "name": "phase11",
+    "experiment_id": "phase11-flow-benchmark-v1",
+    "must_not_rewrite": true
+  },
+  "phase12_preserved": {
+    "available": true,
+    "name": "phase12",
+    "experiment_id": "phase12-endpoint-evidence-v1",
+    "must_not_rewrite": true
+  },
+  "software": {
+    "python": "3.12.3",
+    "platform": "Linux-6.12.94+-x86_64-with-glibc2.39",
+    "sklearn": "1.9.1",
+    "phase13_version": "0.10.0",
+    "phase10_feature_schema": "1.0.0",
+    "sample_feature_schema": "sample_features_v13.1.0"
+  },
+  "acquisition_bound_bytes": 8388608,
+  "evaluated": false,
+  "mode": "external",
+  "dataset_class": null,
+  "manifest": {
+    "name": "dmbd",
+    "version": "not_present",
+    "path": "",
+    "sha256": "",
+    "file_size_bytes": 0,
+    "row_count": 0,
+    "excluded_count": 0,
+    "excluded_reasons": {},
+    "sample_count": 0,
+    "label_counts": {},
+    "label_scope": "sample",
+    "split_counts": {},
+    "event_types": {},
+    "dataset_class": "external_endpoint_benchmark",
+    "available": false,
+    "notes": "No independent endpoint process dataset is present. Set SYNAPSE_DMBD_JSONL to local DMBD-like process JSONL. trees_*.json were not auto-downloaded (\u22481 GB/shard). Label JSON inspection, if present, is not tree evaluation.",
+    "normalization_version": "endpoint-evidence-1.0.0"
+  },
+  "notes": "No DMBD/WinMET/OpTC process evidence was evaluated. Label-file inspection is not reconstruction. Synthetic fixtures were not substituted.",
+  "started_at": "2026-11-04T14:55:52.793980+00:00",
+  "ended_at": "2026-11-04T14:55:52.793993+00:00"
+}

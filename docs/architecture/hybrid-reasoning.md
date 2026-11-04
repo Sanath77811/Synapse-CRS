@@ -40,3 +40,5 @@ H1 normal, H2 unusual legitimate, H3 suspicious pattern, H4 insufficient evidenc
 | Phase 9 hybrid on CIC-IDS2017 flows | Not comparable |
 | Phase 12 endpoint adapter | Implemented; DMBD/WinMET/OpTC not evaluated in this checkout |
 | Phase 9 hybrid on DMBD pid_hash | Not comparable |
+| Phase 13 independent-evidence track | Implemented; process trees not acquired; label JSON is not tree evaluation |
+| Completeness-aware sample method | Experimental; synthetic protocol only unless operator JSONL is supplied |

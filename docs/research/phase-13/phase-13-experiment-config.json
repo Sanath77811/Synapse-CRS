@@ -1,0 +1,6 @@
+{
+  "experiment_id": "phase13-independent-evidence-v1",
+  "feature_schema": "sample_features_v13.1.0",
+  "mode": "external",
+  "acquisition_bound_bytes": 8388608
+}
