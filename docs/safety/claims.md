@@ -43,3 +43,7 @@ The registry does not prove that a target is owned or that a test is authorized.
 ## Execution limitation
 
 v0.1 has no command API, no shell integration, and no client that connects to a target. Capability names such as `telemetry.ingest` reserve vocabulary for later versions. They do not enable collection.
+
+## Research evaluation limitation
+
+Phase 10 measures hybrid components on constructed synthetic reconstructions. Those metrics are not enterprise detection rates and are not CIC-IDS2017 results unless an operator-supplied CSV is parsed as an external benchmark. Benchmark rows are not enrolled Linux telemetry.

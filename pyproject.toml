@@ -47,6 +47,7 @@ pythonpath = [
     "packages/agent/src",
     "packages/correlation/src",
     "packages/reasoning/src",
+    "packages/validation/src",
     "apps/api/src",
 ]
 

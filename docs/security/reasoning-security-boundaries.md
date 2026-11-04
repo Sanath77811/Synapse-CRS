@@ -9,3 +9,5 @@
 - Private keys and envelopes are not stored in reasoning tables.
 - `INSUFFICIENT_EVIDENCE` / H4, SAT/UNSAT/unknown are first-class outputs.
 - No process kill, firewall, shell, or hotpatch from this package.
+- Research CSVs are bounded (8 MiB / 5000 rows / 120 columns). Path must be a real file. Benchmark rows never enter `telemetry_events`.
+- `make research-eval` is offline; there is no unauthenticated API to start large dataset jobs.

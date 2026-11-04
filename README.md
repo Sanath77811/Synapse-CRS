@@ -18,7 +18,7 @@ The short project statement above is the goal. It is not a description of what t
 - Append-only audit events with a SHA-256 hash chain.
 - Bearer-token authentication and an admin/viewer role split.
 - pytest suite, ruff, Docker Compose, and GitHub Actions.
-- Telemetry observation contract 1.0.0, allowlist redaction, Ed25519 signing, PostgreSQL evidence store, administrator agent enrollment, HTTP ingest, a Linux procfs collector, deterministic evidence correlation, and a hybrid reasoning foundation (reconstruction, Isolation Forest baseline, symbolic rules, Z3-checked recommendations). See [docs/architecture/hybrid-reasoning.md](docs/architecture/hybrid-reasoning.md).
+- Telemetry observation contract 1.0.0, allowlist redaction, Ed25519 signing, PostgreSQL evidence store, administrator agent enrollment, HTTP ingest, a Linux procfs collector, deterministic evidence correlation, a hybrid reasoning foundation (reconstruction, Isolation Forest baseline, symbolic rules, Z3-checked recommendations), and a research validation harness that compares those components on synthetic labelled reconstructions. CIC-IDS2017 is not bundled. See [docs/architecture/hybrid-reasoning.md](docs/architecture/hybrid-reasoning.md) and [docs/research/phase-10-methodology.md](docs/research/phase-10-methodology.md).
 
 ## Explicit non-goals of v0.1
 
@@ -42,6 +42,7 @@ packages/telemetry Observation contracts, Ed25519 signatures, offline demo
 packages/agent     Linux procfs collector and ingest client
 packages/correlation Deterministic evidence correlation and findings
 packages/reasoning Hybrid reconstruction, neural baseline, Z3 policy checks
+packages/validation Research evaluation harness (synthetic; optional CIC-IDS CSV adapter)
 frontend/          Minimal React status page
 agent/             Pointer to the Linux collector package
 schemas/           JSON Schema 2020-12 contracts, version 1.0.0
@@ -95,7 +96,7 @@ python3 -m venv .venv
 .venv/bin/ruff format --check .
 ```
 
-`make install`, `make test`, `make lint`, `make demo-agent`, `make demo-correlation`, and `make demo-reasoning` wrap common commands. Reasoning is documented in [docs/guides/reasoning-demo.md](docs/guides/reasoning-demo.md). pytest, the API, and Alembic read `.env` directly and then point the test suite at `synapse_test` so it does not truncate the development database. Do not `source .env`; a shell will mangle the token JSON.
+`make install`, `make test`, `make lint`, `make demo-agent`, `make demo-correlation`, `make demo-reasoning`, and `make research-eval` wrap common commands. Reasoning is documented in [docs/guides/reasoning-demo.md](docs/guides/reasoning-demo.md). Benchmark reproduction is documented in [docs/guides/reproduce-benchmarks.md](docs/guides/reproduce-benchmarks.md). pytest, the API, and Alembic read `.env` directly and then point the test suite at `synapse_test` so it does not truncate the development database. Do not `source .env`; a shell will mangle the token JSON.
 
 Status page:
 

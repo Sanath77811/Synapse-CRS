@@ -33,4 +33,6 @@ H1 normal, H2 unusual legitimate, H3 suspicious pattern, H4 insufficient evidenc
 | Z3 policy verification of recommendations | Implemented and tested |
 | Runtime mitigation / hotpatch | Not implemented (proposals only) |
 | LLM explanations | Not implemented |
-| CIC-IDS or other public IDS datasets | Not implemented |
+| CIC-IDS or other public IDS datasets | Adapter implemented; dataset not bundled; features not comparable to process telemetry |
+| Research experiments A–E | Implemented on synthetic labelled reconstructions |
+| Enterprise / CIC-IDS detection rates | Not evaluated |

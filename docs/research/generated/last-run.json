@@ -1,0 +1,860 @@
+{
+  "experiment_id": "phase10-research-validation-v1",
+  "validation_version": "0.7.0",
+  "started_at": "2026-11-04T13:59:11.237205+00:00",
+  "ended_at": "2026-11-04T13:59:13.935226+00:00",
+  "dataset_name": "synthetic_labelled_reconstructions_v1",
+  "dataset_version": "0.7.0",
+  "dataset_checksum": "constructed_in_process",
+  "feature_schema_version": "1.0.0",
+  "model_version": "isolation-forest-synthetic-baseline-v1",
+  "engine_version": "0.6.0",
+  "rule_version": "1.0.0",
+  "random_seed": 42,
+  "split": {
+    "strategy": "group_or_sequential",
+    "seed": 42,
+    "train": [
+      0,
+      1,
+      2,
+      3,
+      4,
+      5,
+      6
+    ],
+    "validation": [
+      7,
+      8
+    ],
+    "test": [
+      9,
+      10,
+      11
+    ],
+    "notes": "Scenarios are independently constructed fixtures. Sequential split is recorded; reported A\u2013E metrics use the full labelled fixture set because no model is fitted on these reconstructions."
+  },
+  "threshold_configuration": {
+    "neural": "IsolationForest contamination=0.1, unusualness=-decision_function",
+    "tuned_on_test": false
+  },
+  "software": {
+    "python": "3.12.3",
+    "platform": "Linux-6.12.94+-x86_64-with-glibc2.39",
+    "sklearn": "1.9.1",
+    "numpy": "2.5.4"
+  },
+  "dataset_size_scenarios": 12,
+  "label_counts": {
+    "typical": 4,
+    "unusual_volume": 4,
+    "insufficient": 4
+  },
+  "experiments": [
+    {
+      "experiment_id": "A_deterministic_correlation",
+      "task": "Phase 8 findings mapped to three classes",
+      "ground_truth": "synthetic scenario class: typical | unusual_volume | insufficient. unusual_volume is lab network volume, not malice.",
+      "dataset_class": "synthetic_lab",
+      "predictions": [
+        "typical",
+        "unusual_volume",
+        "insufficient",
+        "typical",
+        "unusual_volume",
+        "insufficient",
+        "typical",
+        "unusual_volume",
+        "insufficient",
+        "typical",
+        "unusual_volume",
+        "insufficient"
+      ],
+      "truth": [
+        "typical",
+        "unusual_volume",
+        "insufficient",
+        "typical",
+        "unusual_volume",
+        "insufficient",
+        "typical",
+        "unusual_volume",
+        "insufficient",
+        "typical",
+        "unusual_volume",
+        "insufficient"
+      ],
+      "multiclass_accuracy": 1.0,
+      "unusual_volume_binary": {
+        "true_positive": 4,
+        "false_positive": 0,
+        "true_negative": 8,
+        "false_negative": 0,
+        "precision": 1.0,
+        "recall": 1.0,
+        "f1": 1.0,
+        "false_positive_rate": 0.0,
+        "accuracy": 1.0,
+        "confusion_matrix": [
+          [
+            8,
+            0
+          ],
+          [
+            0,
+            4
+          ]
+        ]
+      },
+      "per_class": {
+        "typical": {
+          "support": 4,
+          "correct": 4
+        },
+        "unusual_volume": {
+          "support": 4,
+          "correct": 4
+        },
+        "insufficient": {
+          "support": 4,
+          "correct": 4
+        }
+      },
+      "elapsed_seconds": 7e-06,
+      "throughput_scenarios_per_second": 1685866.7662,
+      "limitations": "Outputs are not interchangeable attack verdicts. Neural-only cannot express insufficient evidence."
+    },
+    {
+      "experiment_id": "B_neural_only",
+      "task": "Isolation Forest unusual vs not; cannot emit insufficient",
+      "ground_truth": "synthetic scenario class: typical | unusual_volume | insufficient. unusual_volume is lab network volume, not malice.",
+      "dataset_class": "synthetic_lab",
+      "predictions": [
+        "typical",
+        "typical",
+        "typical",
+        "typical",
+        "typical",
+        "typical",
+        "typical",
+        "typical",
+        "typical",
+        "typical",
+        "typical",
+        "typical"
+      ],
+      "truth": [
+        "typical",
+        "unusual_volume",
+        "insufficient",
+        "typical",
+        "unusual_volume",
+        "insufficient",
+        "typical",
+        "unusual_volume",
+        "insufficient",
+        "typical",
+        "unusual_volume",
+        "insufficient"
+      ],
+      "multiclass_accuracy": 0.3333,
+      "unusual_volume_binary": {
+        "true_positive": 0,
+        "false_positive": 0,
+        "true_negative": 8,
+        "false_negative": 4,
+        "precision": 0.0,
+        "recall": 0.0,
+        "f1": 0.0,
+        "false_positive_rate": 0.0,
+        "accuracy": 0.6667,
+        "confusion_matrix": [
+          [
+            8,
+            0
+          ],
+          [
+            4,
+            0
+          ]
+        ]
+      },
+      "per_class": {
+        "typical": {
+          "support": 4,
+          "correct": 4
+        },
+        "unusual_volume": {
+          "support": 4,
+          "correct": 0
+        },
+        "insufficient": {
+          "support": 4,
+          "correct": 0
+        }
+      },
+      "elapsed_seconds": 0.469858,
+      "throughput_scenarios_per_second": 25.5396,
+      "limitations": "Outputs are not interchangeable attack verdicts. Neural-only cannot express insufficient evidence."
+    },
+    {
+      "experiment_id": "C_symbolic_only",
+      "task": "Symbolic rule supports with conservative ties",
+      "ground_truth": "synthetic scenario class: typical | unusual_volume | insufficient. unusual_volume is lab network volume, not malice.",
+      "dataset_class": "synthetic_lab",
+      "predictions": [
+        "typical",
+        "unusual_volume",
+        "insufficient",
+        "typical",
+        "unusual_volume",
+        "insufficient",
+        "typical",
+        "unusual_volume",
+        "insufficient",
+        "typical",
+        "unusual_volume",
+        "insufficient"
+      ],
+      "truth": [
+        "typical",
+        "unusual_volume",
+        "insufficient",
+        "typical",
+        "unusual_volume",
+        "insufficient",
+        "typical",
+        "unusual_volume",
+        "insufficient",
+        "typical",
+        "unusual_volume",
+        "insufficient"
+      ],
+      "multiclass_accuracy": 1.0,
+      "unusual_volume_binary": {
+        "true_positive": 4,
+        "false_positive": 0,
+        "true_negative": 8,
+        "false_negative": 0,
+        "precision": 1.0,
+        "recall": 1.0,
+        "f1": 1.0,
+        "false_positive_rate": 0.0,
+        "accuracy": 1.0,
+        "confusion_matrix": [
+          [
+            8,
+            0
+          ],
+          [
+            0,
+            4
+          ]
+        ]
+      },
+      "per_class": {
+        "typical": {
+          "support": 4,
+          "correct": 4
+        },
+        "unusual_volume": {
+          "support": 4,
+          "correct": 4
+        },
+        "insufficient": {
+          "support": 4,
+          "correct": 4
+        }
+      },
+      "elapsed_seconds": 0.000398,
+      "throughput_scenarios_per_second": 30171.2217,
+      "limitations": "Outputs are not interchangeable attack verdicts. Neural-only cannot express insufficient evidence."
+    },
+    {
+      "experiment_id": "D_hybrid",
+      "task": "Phase 9 hybrid selected hypothesis mapped to three classes",
+      "ground_truth": "synthetic scenario class: typical | unusual_volume | insufficient. unusual_volume is lab network volume, not malice.",
+      "dataset_class": "synthetic_lab",
+      "predictions": [
+        "typical",
+        "unusual_volume",
+        "insufficient",
+        "typical",
+        "unusual_volume",
+        "insufficient",
+        "typical",
+        "unusual_volume",
+        "insufficient",
+        "typical",
+        "unusual_volume",
+        "insufficient"
+      ],
+      "truth": [
+        "typical",
+        "unusual_volume",
+        "insufficient",
+        "typical",
+        "unusual_volume",
+        "insufficient",
+        "typical",
+        "unusual_volume",
+        "insufficient",
+        "typical",
+        "unusual_volume",
+        "insufficient"
+      ],
+      "multiclass_accuracy": 1.0,
+      "unusual_volume_binary": {
+        "true_positive": 4,
+        "false_positive": 0,
+        "true_negative": 8,
+        "false_negative": 0,
+        "precision": 1.0,
+        "recall": 1.0,
+        "f1": 1.0,
+        "false_positive_rate": 0.0,
+        "accuracy": 1.0,
+        "confusion_matrix": [
+          [
+            8,
+            0
+          ],
+          [
+            0,
+            4
+          ]
+        ]
+      },
+      "per_class": {
+        "typical": {
+          "support": 4,
+          "correct": 4
+        },
+        "unusual_volume": {
+          "support": 4,
+          "correct": 4
+        },
+        "insufficient": {
+          "support": 4,
+          "correct": 4
+        }
+      },
+      "elapsed_seconds": 0.413493,
+      "throughput_scenarios_per_second": 29.021,
+      "limitations": "Outputs are not interchangeable attack verdicts. Neural-only cannot express insufficient evidence."
+    },
+    {
+      "experiment_id": "E_neural_plus_symbolic",
+      "task": "Neural + symbolic without completeness gate",
+      "ground_truth": "synthetic scenario class: typical | unusual_volume | insufficient. unusual_volume is lab network volume, not malice.",
+      "dataset_class": "synthetic_lab",
+      "predictions": [
+        "typical",
+        "unusual_volume",
+        "insufficient",
+        "typical",
+        "unusual_volume",
+        "insufficient",
+        "typical",
+        "unusual_volume",
+        "insufficient",
+        "typical",
+        "unusual_volume",
+        "insufficient"
+      ],
+      "truth": [
+        "typical",
+        "unusual_volume",
+        "insufficient",
+        "typical",
+        "unusual_volume",
+        "insufficient",
+        "typical",
+        "unusual_volume",
+        "insufficient",
+        "typical",
+        "unusual_volume",
+        "insufficient"
+      ],
+      "multiclass_accuracy": 1.0,
+      "unusual_volume_binary": {
+        "true_positive": 4,
+        "false_positive": 0,
+        "true_negative": 8,
+        "false_negative": 0,
+        "precision": 1.0,
+        "recall": 1.0,
+        "f1": 1.0,
+        "false_positive_rate": 0.0,
+        "accuracy": 1.0,
+        "confusion_matrix": [
+          [
+            8,
+            0
+          ],
+          [
+            0,
+            4
+          ]
+        ]
+      },
+      "per_class": {
+        "typical": {
+          "support": 4,
+          "correct": 4
+        },
+        "unusual_volume": {
+          "support": 4,
+          "correct": 4
+        },
+        "insufficient": {
+          "support": 4,
+          "correct": 4
+        }
+      },
+      "elapsed_seconds": 0.425857,
+      "throughput_scenarios_per_second": 28.1785,
+      "limitations": "Outputs are not interchangeable attack verdicts. Neural-only cannot express insufficient evidence."
+    },
+    {
+      "experiment_id": "E_hybrid_without_evidence_quality",
+      "task": "Hybrid minus reconstruction-completeness H4 boost",
+      "ground_truth": "synthetic scenario class: typical | unusual_volume | insufficient. unusual_volume is lab network volume, not malice.",
+      "dataset_class": "synthetic_lab",
+      "predictions": [
+        "typical",
+        "unusual_volume",
+        "insufficient",
+        "typical",
+        "unusual_volume",
+        "insufficient",
+        "typical",
+        "unusual_volume",
+        "insufficient",
+        "typical",
+        "unusual_volume",
+        "insufficient"
+      ],
+      "truth": [
+        "typical",
+        "unusual_volume",
+        "insufficient",
+        "typical",
+        "unusual_volume",
+        "insufficient",
+        "typical",
+        "unusual_volume",
+        "insufficient",
+        "typical",
+        "unusual_volume",
+        "insufficient"
+      ],
+      "multiclass_accuracy": 1.0,
+      "unusual_volume_binary": {
+        "true_positive": 4,
+        "false_positive": 0,
+        "true_negative": 8,
+        "false_negative": 0,
+        "precision": 1.0,
+        "recall": 1.0,
+        "f1": 1.0,
+        "false_positive_rate": 0.0,
+        "accuracy": 1.0,
+        "confusion_matrix": [
+          [
+            8,
+            0
+          ],
+          [
+            0,
+            4
+          ]
+        ]
+      },
+      "per_class": {
+        "typical": {
+          "support": 4,
+          "correct": 4
+        },
+        "unusual_volume": {
+          "support": 4,
+          "correct": 4
+        },
+        "insufficient": {
+          "support": 4,
+          "correct": 4
+        }
+      },
+      "elapsed_seconds": 0.400014,
+      "throughput_scenarios_per_second": 29.9989,
+      "limitations": "Outputs are not interchangeable attack verdicts. Neural-only cannot express insufficient evidence."
+    }
+  ],
+  "neural_holdout_synthetic_features": {
+    "dataset": "synthetic_lab_features_v1",
+    "precision": 0.0,
+    "recall": 0.0,
+    "f1": 0.0,
+    "false_positive_rate": 0.2,
+    "test_normal": 10,
+    "test_unusual": 8,
+    "notes": "Holdout is synthetic and tiny. Metrics are not enterprise detection rates. The forest is fitted on the first 30 typical rows only.",
+    "pr_auc": null,
+    "roc_auc": null,
+    "auc_notes": "AUC omitted: tiny synthetic holdout and binary scores only."
+  },
+  "explainability": {
+    "mean_evidence_coverage": 1.0,
+    "all_reference_valid": true,
+    "all_rules_traceable": true,
+    "unsupported_claim_total": 0,
+    "per_scenario": [
+      {
+        "evidence_reference_validity": 1.0,
+        "evidence_coverage": 1.0,
+        "rule_traceability": 1.0,
+        "explanation_completeness": 1.0,
+        "unsupported_claim_count": 0,
+        "provenance_consistency": 1.0,
+        "inferred_timeline_without_event_id": true,
+        "notes": "Synthetic reconstruction metrics. Not a human-rated explanation score."
+      },
+      {
+        "evidence_reference_validity": 1.0,
+        "evidence_coverage": 1.0,
+        "rule_traceability": 1.0,
+        "explanation_completeness": 1.0,
+        "unsupported_claim_count": 0,
+        "provenance_consistency": 1.0,
+        "inferred_timeline_without_event_id": true,
+        "notes": "Synthetic reconstruction metrics. Not a human-rated explanation score."
+      },
+      {
+        "evidence_reference_validity": 1.0,
+        "evidence_coverage": 1.0,
+        "rule_traceability": 1.0,
+        "explanation_completeness": 1.0,
+        "unsupported_claim_count": 0,
+        "provenance_consistency": 1.0,
+        "inferred_timeline_without_event_id": true,
+        "notes": "Synthetic reconstruction metrics. Not a human-rated explanation score."
+      },
+      {
+        "evidence_reference_validity": 1.0,
+        "evidence_coverage": 1.0,
+        "rule_traceability": 1.0,
+        "explanation_completeness": 1.0,
+        "unsupported_claim_count": 0,
+        "provenance_consistency": 1.0,
+        "inferred_timeline_without_event_id": true,
+        "notes": "Synthetic reconstruction metrics. Not a human-rated explanation score."
+      },
+      {
+        "evidence_reference_validity": 1.0,
+        "evidence_coverage": 1.0,
+        "rule_traceability": 1.0,
+        "explanation_completeness": 1.0,
+        "unsupported_claim_count": 0,
+        "provenance_consistency": 1.0,
+        "inferred_timeline_without_event_id": true,
+        "notes": "Synthetic reconstruction metrics. Not a human-rated explanation score."
+      },
+      {
+        "evidence_reference_validity": 1.0,
+        "evidence_coverage": 1.0,
+        "rule_traceability": 1.0,
+        "explanation_completeness": 1.0,
+        "unsupported_claim_count": 0,
+        "provenance_consistency": 1.0,
+        "inferred_timeline_without_event_id": true,
+        "notes": "Synthetic reconstruction metrics. Not a human-rated explanation score."
+      },
+      {
+        "evidence_reference_validity": 1.0,
+        "evidence_coverage": 1.0,
+        "rule_traceability": 1.0,
+        "explanation_completeness": 1.0,
+        "unsupported_claim_count": 0,
+        "provenance_consistency": 1.0,
+        "inferred_timeline_without_event_id": true,
+        "notes": "Synthetic reconstruction metrics. Not a human-rated explanation score."
+      },
+      {
+        "evidence_reference_validity": 1.0,
+        "evidence_coverage": 1.0,
+        "rule_traceability": 1.0,
+        "explanation_completeness": 1.0,
+        "unsupported_claim_count": 0,
+        "provenance_consistency": 1.0,
+        "inferred_timeline_without_event_id": true,
+        "notes": "Synthetic reconstruction metrics. Not a human-rated explanation score."
+      },
+      {
+        "evidence_reference_validity": 1.0,
+        "evidence_coverage": 1.0,
+        "rule_traceability": 1.0,
+        "explanation_completeness": 1.0,
+        "unsupported_claim_count": 0,
+        "provenance_consistency": 1.0,
+        "inferred_timeline_without_event_id": true,
+        "notes": "Synthetic reconstruction metrics. Not a human-rated explanation score."
+      },
+      {
+        "evidence_reference_validity": 1.0,
+        "evidence_coverage": 1.0,
+        "rule_traceability": 1.0,
+        "explanation_completeness": 1.0,
+        "unsupported_claim_count": 0,
+        "provenance_consistency": 1.0,
+        "inferred_timeline_without_event_id": true,
+        "notes": "Synthetic reconstruction metrics. Not a human-rated explanation score."
+      },
+      {
+        "evidence_reference_validity": 1.0,
+        "evidence_coverage": 1.0,
+        "rule_traceability": 1.0,
+        "explanation_completeness": 1.0,
+        "unsupported_claim_count": 0,
+        "provenance_consistency": 1.0,
+        "inferred_timeline_without_event_id": true,
+        "notes": "Synthetic reconstruction metrics. Not a human-rated explanation score."
+      },
+      {
+        "evidence_reference_validity": 1.0,
+        "evidence_coverage": 1.0,
+        "rule_traceability": 1.0,
+        "explanation_completeness": 1.0,
+        "unsupported_claim_count": 0,
+        "provenance_consistency": 1.0,
+        "inferred_timeline_without_event_id": true,
+        "notes": "Synthetic reconstruction metrics. Not a human-rated explanation score."
+      }
+    ]
+  },
+  "counterfactuals": [
+    {
+      "name": "remove_influential_network_volume",
+      "original_unchanged": true,
+      "assumptions_recorded": true,
+      "kind": "feature_ablation",
+      "baseline_hypothesis": "H3_suspicious_pattern",
+      "result_hypothesis": "H1_normal",
+      "dependent_outputs_changed": true
+    },
+    {
+      "name": "remove_non_influential_finding",
+      "original_unchanged": true,
+      "assumptions_recorded": true,
+      "kind": "rule_sensitivity",
+      "baseline_hypothesis": "H1_normal",
+      "result_hypothesis": "H1_normal",
+      "dependent_outputs_changed": false
+    },
+    {
+      "name": "repeat_same_scenario",
+      "reproducible": true,
+      "kind": "feature_ablation",
+      "baseline_hypothesis": "H3_suspicious_pattern",
+      "result_hypothesis": "H1_normal"
+    },
+    {
+      "name": "invalid_empty_reconstruction",
+      "rejected_or_empty": true,
+      "notes": "Empty observation sets are not treated as enrolled telemetry."
+    }
+  ],
+  "formal_verification": [
+    {
+      "name": "authorized_proposal",
+      "expected_status": "verified_under_model",
+      "actual_status": "verified_under_model",
+      "expected_solver": "sat",
+      "actual_solver": "sat",
+      "pass": true,
+      "violated": []
+    },
+    {
+      "name": "unauthorized_proposal",
+      "expected_status": "rejected_by_policy",
+      "actual_status": "rejected_by_policy",
+      "expected_solver": "unsat",
+      "actual_solver": "unsat",
+      "pass": true,
+      "violated": [
+        "authorized"
+      ]
+    },
+    {
+      "name": "out_of_scope_target",
+      "expected_status": "rejected_by_policy",
+      "actual_status": "rejected_by_policy",
+      "expected_solver": "unsat",
+      "actual_solver": "unsat",
+      "pass": true,
+      "violated": [
+        "in_scope"
+      ]
+    },
+    {
+      "name": "unknown_target_identity",
+      "expected_status": "rejected_by_policy",
+      "actual_status": "rejected_by_policy",
+      "expected_solver": "unsat",
+      "actual_solver": "unsat",
+      "pass": true,
+      "violated": [
+        "identity_certain"
+      ]
+    },
+    {
+      "name": "missing_evidence",
+      "expected_status": "unknown_insufficient_evidence",
+      "actual_status": "unknown_insufficient_evidence",
+      "expected_solver": "unsat",
+      "actual_solver": "unsat",
+      "pass": true,
+      "violated": [
+        "evidence_present"
+      ]
+    },
+    {
+      "name": "missing_human_approval",
+      "expected_status": "rejected_by_policy",
+      "actual_status": "rejected_by_policy",
+      "expected_solver": "unsat",
+      "actual_solver": "unsat",
+      "pass": true,
+      "violated": [
+        "human_approval_if_impactful"
+      ]
+    },
+    {
+      "name": "destructive_action",
+      "expected_status": "rejected_by_policy",
+      "actual_status": "rejected_by_policy",
+      "expected_solver": "unsat",
+      "actual_solver": "unsat",
+      "pass": true,
+      "violated": [
+        "destructive_is_false",
+        "mitigation_kind_forbidden"
+      ]
+    },
+    {
+      "name": "forbidden_mitigation_type",
+      "expected_status": "rejected_by_policy",
+      "actual_status": "rejected_by_policy",
+      "expected_solver": "unsat",
+      "actual_solver": "unsat",
+      "pass": true,
+      "violated": [
+        "mitigation_kind_forbidden"
+      ]
+    },
+    {
+      "name": "invalid_executed_flag",
+      "expected_status": "rejected_by_policy",
+      "actual_status": "rejected_by_policy",
+      "expected_solver": "unsat",
+      "actual_solver": "unsat",
+      "pass": true,
+      "violated": [
+        "executed_is_false"
+      ]
+    },
+    {
+      "name": "conflicting_constraints",
+      "expected_status": "unknown_insufficient_evidence",
+      "actual_status": "unknown_insufficient_evidence",
+      "expected_solver": "unsat",
+      "actual_solver": "unsat",
+      "pass": true,
+      "violated": [
+        "executed_is_false",
+        "destructive_is_false",
+        "authorized",
+        "in_scope",
+        "identity_certain",
+        "evidence_present",
+        "human_approval_if_impactful",
+        "mitigation_kind_forbidden"
+      ]
+    },
+    {
+      "name": "solver_timeout",
+      "expected_status": "not_verified",
+      "actual_status": "not_triggered",
+      "expected_solver": "unknown",
+      "actual_solver": "timeout_ms=2000",
+      "pass": true,
+      "violated": [],
+      "notes": "TIMEOUT_MS is 2000. This Boolean policy did not time out."
+    },
+    {
+      "name": "unknown_solver_result",
+      "expected_status": "not_verified",
+      "actual_status": "not_triggered",
+      "expected_solver": "unknown",
+      "actual_solver": "not_triggered",
+      "pass": true,
+      "violated": [],
+      "notes": "Unknown solver outcomes are coded; they did not occur in this matrix."
+    }
+  ],
+  "prediction": {
+    "dataset_class": "synthetic_lab",
+    "task": "event_volume_next_window",
+    "series": [
+      2.0,
+      2.0,
+      3.0,
+      3.0,
+      8.0,
+      8.0,
+      7.0
+    ],
+    "persistence_mae": 1.1667,
+    "historical_mean_mae": 2.3722,
+    "model_equals_persistence": true,
+    "measurable_advantage_over_persistence": false,
+    "chronological": true,
+    "uncertainty": "unquantified; persistence equals the shipped model",
+    "notes": "The shipped volume predictor is the persistence baseline. It provides no measurable advantage over persistence on this series. Not a labelled attack forecast."
+  },
+  "cicids2017": {
+    "available": false,
+    "manifest": {
+      "name": "cicids2017",
+      "version": "not_present",
+      "source": "https://www.unb.ca/cic/datasets/ids-2017.html",
+      "path": "",
+      "sha256": "",
+      "row_count": 0,
+      "excluded_count": 0,
+      "label_counts": {},
+      "category_counts": {},
+      "preprocessing": {},
+      "available": false,
+      "notes": "CIC-IDS2017 is not in the repository. Set SYNAPSE_CICIDS_CSV to a local CSV."
+    },
+    "compatibility": {
+      "not_available": 7,
+      "not_comparable": 3
+    },
+    "directly_compatible_features": 0,
+    "experiment": "not_run",
+    "notes": "Do not treat missing CIC-IDS2017 as a silent skip of documentation."
+  },
+  "performance": {
+    "rss_max_kb": 174976,
+    "rss_before_kb": 145760,
+    "elapsed_seconds": 2.9501
+  },
+  "known_limitations": [
+    "Synthetic reconstructions are not enterprise detection performance.",
+    "CIC-IDS2017 is not bundled and is not comparable to process-level features.",
+    "Hybrid superiority is not assumed.",
+    "SAT under Z3 is not real-world safety.",
+    "Counterfactuals are feature ablation, not causal identification."
+  ]
+}
