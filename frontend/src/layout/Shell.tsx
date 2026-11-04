@@ -3,6 +3,7 @@ import { maskToken } from "../auth/session";
 import { CommandPalette } from "../components/CommandPalette";
 import { ErrorBoundary } from "../components/ErrorBoundary";
 import { usePlatformContext } from "../context/PlatformContext";
+import { provenanceFlag } from "../lib/provenance";
 
 export const LINKS = [
   { to: "/", mark: "⌘", label: "Command" },
@@ -32,7 +33,15 @@ export function Shell() {
     source,
     error,
     authStatus,
+    state,
+    data,
   } = usePlatformContext();
+  const provenance = provenanceFlag(
+    mode,
+    source,
+    state === "loading",
+    data.assessments[0]?.dataset_label ?? data.timeline?.dataset_label ?? null,
+  );
   const apiOk = health?.status === "ok";
   const dbOk = ready?.status === "ready";
   const workspace = LINKS.find((item) =>
@@ -70,7 +79,11 @@ export function Shell() {
             {source}
           </p>
           <div className="hud-cluster">
-            {mode === "demo" ? <span className="demo-flag">DEMO MODE</span> : null}
+            {provenance.kind === "demo" || provenance.kind === "laboratory" ? (
+              <span className={provenance.kind === "demo" ? "demo-flag" : "lab-flag"} title={provenance.note}>
+                {provenance.label}
+              </span>
+            ) : null}
             <span className={apiOk ? "lamp lamp-ok" : "lamp lamp-off"}>
               API {apiOk ? "live" : healthError ? "refused" : "idle"}
             </span>
@@ -78,7 +91,7 @@ export function Shell() {
               DB {dbOk ? "ready" : "unknown"}
             </span>
             {authStatus === "rejected" ? <span className="lamp lamp-off">auth rejected</span> : null}
-            {token ? <span className="mono dim">tok {maskToken(token)}</span> : null}
+            {token ? <span className="mono dim hud-token">tok {maskToken(token)}</span> : null}
             <Link className="ghost" to="/session">
               Session
             </Link>
@@ -96,7 +109,11 @@ export function Shell() {
             )}
           </div>
         </header>
+        {state === "loading" ? <p className="dim hud-note">{provenance.note}</p> : null}
         {error && mode === "live" ? <p className="error-banner hud-error">{error}</p> : null}
+        {mode === "live" && provenance.kind === "laboratory" ? (
+          <p className="hud-note lab-note">{provenance.note}</p>
+        ) : null}
         <main id="workspace" className="viewport">
           <ErrorBoundary>
             <Outlet />

@@ -1,3 +1,4 @@
+import { Link } from "react-router-dom";
 import { usePlatformContext } from "../context/PlatformContext";
 
 export function DefenceLab() {
@@ -20,6 +21,13 @@ export function DefenceLab() {
             <p className="solver">{verification.solver_result}</p>
             <p>{verification.explanation}</p>
             <p className="dim">{verification.assumptions}</p>
+            <p className="dim">
+              SAT/UNSAT/UNKNOWN is the Z3 result on encoded policy constraints. It is not host
+              safety, not executed mitigation, and not in-memory hotpatching.
+            </p>
+            <p>
+              <Link to="/control">Verify audit chain</Link>
+            </p>
           </section>
           <section>
             <h2>Constraints</h2>

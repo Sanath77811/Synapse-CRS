@@ -43,7 +43,7 @@ npm ci
 npm run dev
 ```
 
-Open `http://127.0.0.1:5173`. Default session is **DEMO MODE** (synthetic lab records). Connect a live bearer token at `/session`.
+Open `http://127.0.0.1:5173`. Default session is **DEMO MODE** (synthetic lab records). Connect a live bearer token at `/session`. Demonstration sequence: [DEMO_RUNBOOK.md](../../DEMO_RUNBOOK.md).
 
 Production build and tests:
 

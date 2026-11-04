@@ -1,4 +1,5 @@
-import { useState } from "react";
+import { useMemo, useState } from "react";
+import { Link, useSearchParams } from "react-router-dom";
 import type { FindingView, SupportingEventView } from "../api/types";
 import { Field } from "../components/DetailPanel";
 import { Timeline } from "../components/Timeline";
@@ -7,8 +8,14 @@ import { formatTime, shortId } from "../lib/format";
 
 export function EvidenceLab() {
   const { data, mode } = usePlatformContext();
+  const [params] = useSearchParams();
   const [query, setQuery] = useState("");
-  const [finding, setFinding] = useState<FindingView | null>(data.findings[0] ?? null);
+  const requested = params.get("finding");
+  const initial = useMemo(
+    () => data.findings.find((item) => item.id === requested) ?? data.findings[0] ?? null,
+    [data.findings, requested],
+  );
+  const [finding, setFinding] = useState<FindingView | null>(initial);
   const [event, setEvent] = useState<SupportingEventView | null>(null);
   const q = query.trim().toLowerCase();
   const findings = data.findings.filter((item) => {
@@ -47,7 +54,7 @@ export function EvidenceLab() {
               </button>
               <ul>
                 {item.supporting_events.map((row) => (
-                  <li key={row.event_id}>
+                  <li key={`${item.id}-${row.event_id}`}>
                     <button
                       type="button"
                       className={event?.event_id === row.event_id ? "tree-btn is-on" : "tree-btn"}
@@ -69,6 +76,7 @@ export function EvidenceLab() {
             <h1>Forensic canvas</h1>
           </div>
           {mode === "demo" ? <span className="demo-flag">DEMO MODE</span> : null}
+          <Link to="/graph">Threat graph</Link>
         </header>
         <div className="relation-map">
           {finding ? (

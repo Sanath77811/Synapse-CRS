@@ -1,16 +1,15 @@
 import { useMemo, useState } from "react";
+import { Link } from "react-router-dom";
 import type { AgentView } from "../api/types";
 import { Field } from "../components/DetailPanel";
 import { usePlatformContext } from "../context/PlatformContext";
 import { formatTime, shortId } from "../lib/format";
+import { uniqueSupportingEvents } from "../lib/uniqueEvents";
 
 export function TelemetryOps() {
   const { data, selectedTarget, setSelectedTargetId, mode } = usePlatformContext();
   const [agent, setAgent] = useState<AgentView | null>(null);
-  const events = useMemo(
-    () => data.findings.flatMap((item) => item.supporting_events),
-    [data.findings],
-  );
+  const events = useMemo(() => uniqueSupportingEvents(data.findings), [data.findings]);
   return (
     <div className="ops">
       <header className="ops-strip">
@@ -64,7 +63,11 @@ export function TelemetryOps() {
         <div>
           <h2>Receipt ticker</h2>
           <p className="dim">
-            Derived from finding.supporting_events — not a telemetry_events dump.
+            Derived from finding.supporting_events — not a telemetry_events dump. Laboratory
+            envelopes are signed POST bodies, not /proc samples.
+          </p>
+          <p>
+            <Link to="/evidence">Open evidence lab</Link>
           </p>
           <ol className="ticker">
             {events.map((item) => (

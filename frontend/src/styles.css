@@ -110,9 +110,19 @@ body {
   top: 0;
   z-index: 6;
 }
-.hud-title { margin: 0; color: var(--dim); font-size: 0.78rem; letter-spacing: 0.08em; text-transform: uppercase; }
+.hud-title {
+  margin: 0;
+  min-width: 0;
+  color: var(--dim);
+  font-size: 0.78rem;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
 .hud-sep { margin: 0 0.45rem; opacity: 0.4; }
-.hud-cluster { display: flex; gap: 0.55rem; align-items: center; flex-wrap: wrap; }
+.hud-cluster { display: flex; gap: 0.55rem; align-items: center; flex-wrap: nowrap; }
 .viewport { flex: 1; min-height: 0; overflow: auto; }
 
 .kicker { margin: 0; letter-spacing: 0.18em; text-transform: uppercase; color: var(--cyan); font-size: 0.68rem; }
@@ -250,17 +260,21 @@ input, select {
 .rel-links { display: flex; gap: 0.6rem; flex-wrap: wrap; justify-content: center; }
 .rel-miss { border-style: dashed; color: var(--amber); }
 
-.graph-stage { position: relative; height: calc(100vh - 42px); }
-.graph-shell { height: 100%; }
+.graph-stage {
+  position: relative;
+  display: grid;
+  grid-template-rows: auto minmax(280px, 1fr);
+  height: calc(100vh - 52px);
+}
+.graph-shell { min-height: 280px; height: 100%; }
 .float-bar {
-  position: absolute;
+  position: relative;
   z-index: 4;
-  left: 12px;
-  top: 12px;
   display: flex;
   gap: 0.8rem;
   align-items: end;
-  max-width: calc(100% - 24px);
+  flex-wrap: wrap;
+  padding: 0.7rem 0.8rem 0;
 }
 .float-bar input { width: 220px; }
 .float-legend {
@@ -423,20 +437,60 @@ input, select {
 }
 .lock-copy { max-width: 28rem; padding: 1.5rem; }
 
-@media (max-width: 1366px) {
+@media (max-width: 1440px) {
   .command { grid-template-columns: 180px minmax(0,1fr) 220px; }
   .ticker li { grid-template-columns: 1fr; }
 }
-@media (max-width: 1100px) {
-  .command, .forensic, .theatre, .dossier, .ops-grid, .duel, .bench-grid, .notebooks, .control-grid, .dos-split {
+@media (max-width: 1280px) {
+  .command {
+    grid-template-columns: minmax(0, 1fr) minmax(220px, 280px);
+    grid-template-areas:
+      "health side"
+      "core core"
+      "tape tape";
+    grid-template-rows: none;
+    height: auto;
+    min-height: 0;
+  }
+  .forensic {
+    grid-template-columns: minmax(200px, 260px) minmax(0, 1fr);
+    grid-template-areas:
+      "tree canvas"
+      "inspect inspect"
+      "story story";
+    height: auto;
+    min-height: 0;
+  }
+  .fx-tree, .fx-canvas { min-height: 240px; }
+  .theatre, .dossier, .ops-grid, .duel, .bench-grid, .notebooks, .control-grid, .dos-split {
     grid-template-columns: 1fr;
-    grid-template-areas: none;
     height: auto;
   }
-  .command { grid-template-rows: none; }
-  .zone-health, .zone-core, .zone-side, .zone-tape { grid-area: auto; }
-  .fx-tree, .fx-canvas, .fx-inspect, .fx-tape { grid-area: auto; }
   .versus { display: none; }
+  .graph-stage {
+    display: flex;
+    flex-direction: column;
+    height: auto;
+    min-height: calc(100vh - 52px);
+  }
+  .graph-shell { height: 62vh; min-height: 320px; }
+  .float-inspect {
+    position: static;
+    width: min(100%, 36rem);
+    max-height: none;
+    margin: 0.6rem 0.8rem 1rem;
+  }
+  .float-legend { position: static; margin: 0 0.8rem 0.8rem; }
+  .react-flow__minimap { display: none; }
+  .hud-token { display: none; }
+}
+@media (max-width: 1024px) {
+  .command, .forensic {
+    grid-template-columns: 1fr;
+    grid-template-areas: none;
+  }
+  .zone-health, .zone-core, .zone-side, .zone-tape,
+  .fx-tree, .fx-canvas, .fx-inspect, .fx-tape { grid-area: auto; }
 }
 @media (max-width: 900px) {
   .shell { grid-template-columns: 1fr; }
@@ -448,6 +502,38 @@ input, select {
 }
 
 .hud-error { margin: 0; border-radius: 0; border-left: 0; border-right: 0; }
+.hud-note, .lab-note {
+  margin: 0;
+  padding: 0.35rem 1rem;
+  font-size: 0.78rem;
+  color: var(--amber);
+  border-bottom: 1px solid var(--line);
+}
+.lab-flag {
+  border: 1px solid rgba(125, 211, 252, 0.45);
+  color: var(--blue);
+  padding: 0.12rem 0.45rem;
+  font-size: 0.68rem;
+  letter-spacing: 0.1em;
+}
+.journey {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.15rem;
+  font-size: 0.72rem;
+  margin-bottom: 0.8rem;
+}
+.journey a { color: var(--dim); text-decoration: none; }
+.journey a.is-now { color: var(--cyan); }
+.chip {
+  font-size: 0.68rem;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+.chip-observed { color: var(--blue); }
+.chip-correlated { color: var(--cyan); }
+.chip-inferred { color: var(--violet); }
+.data-table { min-width: 640px; }
 .kind-toggles {
   display: flex;
   gap: 0.55rem;

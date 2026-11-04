@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { Link } from "react-router-dom";
 import { usePlatformContext } from "../context/PlatformContext";
 
 export function HypothesisArena() {
@@ -21,6 +22,7 @@ export function HypothesisArena() {
         <div>
           <p className="kicker">Hypothesis arena</p>
           <h1>Competing explanations</h1>
+          <p className="dim">Support scores are engine values, not probabilities. Selected is not a verdict.</p>
         </div>
         {mode === "demo" ? <span className="demo-flag">DEMO MODE</span> : null}
       </header>
@@ -43,7 +45,9 @@ export function HypothesisArena() {
               </select>
             </label>
             <h2>{item.hypothesis_id}</h2>
-            <p className="support">{item.support} support score</p>
+            <p className="support">
+              {item.status} · {item.support} support score
+            </p>
             <p>{item.rationale}</p>
             <h3>Supports</h3>
             <ul>
@@ -59,12 +63,23 @@ export function HypothesisArena() {
                 <li key={line}>{line}</li>
               ))}
             </ul>
+            <h3>Unresolved</h3>
+            <ul>
+              {item.missing_evidence.map((line) => (
+                <li key={line}>{line}</li>
+              ))}
+            </ul>
           </section>
         ))}
         <div className="versus" aria-hidden="true">
           vs
         </div>
       </div>
+      <p>
+        <Link to="/reasoning">Reasoning theatre</Link>
+        {" · "}
+        <Link to="/defence">Defence lab</Link>
+      </p>
     </div>
   );
 }

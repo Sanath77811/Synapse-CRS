@@ -65,6 +65,7 @@ export function GraphCanvas({
         >
           <Background gap={22} size={1} color="rgba(125, 211, 252, 0.07)" />
           <MiniMap
+            className="graph-minimap"
             pannable
             zoomable
             maskColor="rgba(7,9,14,0.72)"

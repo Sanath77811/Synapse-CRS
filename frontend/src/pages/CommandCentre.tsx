@@ -1,5 +1,6 @@
 import { Link } from "react-router-dom";
 import { IntelligenceCore } from "../components/IntelligenceCore";
+import { Journey } from "../components/Journey";
 import { usePlatformContext } from "../context/PlatformContext";
 import { RESEARCH_PHASES } from "../data/research";
 import { formatTime } from "../lib/format";
@@ -11,6 +12,7 @@ export function CommandCentre() {
   return (
     <div className="command">
       <aside className="zone zone-health">
+        <Journey current="/" />
         <h2>Plant</h2>
         <ol className="meters">
           <li>
@@ -48,18 +50,20 @@ export function CommandCentre() {
       <aside className="zone zone-side">
         <h2>Target lock</h2>
         {selectedTarget ? (
-          <div className="lock-card">
-            <strong>{selectedTarget.name}</strong>
-            <span className="mono wrap">{selectedTarget.id}</span>
-            <span>{selectedTarget.authorization_status}</span>
-            <span className="dim">{selectedTarget.scope.environment}</span>
-          </div>
+          <>
+            <Link className="lock-card" to="/telemetry">
+              <strong>{selectedTarget.name}</strong>
+              <span className="mono wrap">{selectedTarget.id}</span>
+              <span>{selectedTarget.authorization_status}</span>
+              <span className="dim">{selectedTarget.scope.environment}</span>
+            </Link>
+          </>
         ) : (
           <p className="dim">No target.</p>
         )}
         <h2>Latest finding</h2>
         {latestFinding ? (
-          <Link className="ribbon" to="/evidence">
+          <Link className="ribbon" to={`/evidence?finding=${latestFinding.id}`}>
             <b>{latestFinding.finding_type.replaceAll("_", " ")}</b>
             <span>{latestFinding.epistemic_status}</span>
             <span className="dim">{latestFinding.explanation}</span>

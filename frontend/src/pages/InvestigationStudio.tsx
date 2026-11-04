@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { useNavigate, useParams } from "react-router-dom";
+import { Link, useNavigate, useParams } from "react-router-dom";
 import { apiRequest } from "../api/client";
 import type { CaseDetail } from "../api/types";
 import { Timeline } from "../components/Timeline";
@@ -142,8 +142,13 @@ export function InvestigationStudio() {
                 <h2>Linked evidence</h2>
                 <p className="dim">Findings in the current snapshot, not a private case join table.</p>
                 {data.findings.map((item) => (
-                  <p key={item.id}>{item.finding_type.replaceAll("_", " ")}</p>
+                  <p key={item.id}>
+                    <Link to={`/evidence?finding=${item.id}`}>{item.finding_type.replaceAll("_", " ")}</Link>
+                  </p>
                 ))}
+                <p>
+                  <Link to="/graph">Open threat graph</Link>
+                </p>
                 {data.timeline ? <Timeline items={data.timeline.timeline.slice(0, 4)} /> : null}
               </div>
             </div>

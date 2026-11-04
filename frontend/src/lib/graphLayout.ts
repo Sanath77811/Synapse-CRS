@@ -7,7 +7,7 @@ const NODE_HEIGHT = 58;
 export function layoutGraph(nodes: Node[], edges: Edge[]): { nodes: Node[]; edges: Edge[] } {
   const graph = new dagre.graphlib.Graph();
   graph.setDefaultEdgeLabel(() => ({}));
-  graph.setGraph({ rankdir: "LR", nodesep: 56, ranksep: 110, marginx: 32, marginy: 40 });
+  graph.setGraph({ rankdir: "LR", nodesep: 72, ranksep: 140, marginx: 40, marginy: 48 });
   for (const node of nodes) {
     graph.setNode(node.id, { width: NODE_WIDTH, height: NODE_HEIGHT });
   }

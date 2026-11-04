@@ -1,4 +1,5 @@
 import { useMemo, useState } from "react";
+import { Link } from "react-router-dom";
 import { Field } from "../components/DetailPanel";
 import { GraphCanvas } from "../components/GraphCanvas";
 import { usePlatformContext } from "../context/PlatformContext";
@@ -110,6 +111,15 @@ export function ThreatGraph() {
           <Field label="Kind" value={String(selectedNode.data.kind)} />
           <Field label="Title" value={String(selectedNode.data.title)} />
           <p className="dim">Edges are enrollment, finding support, or stored correlation only.</p>
+          {String(selectedNode.data.kind) === "finding" ? (
+            <p>
+              <Link to={`/evidence?finding=${selectedNode.id}`}>Open in Evidence Lab</Link>
+            </p>
+          ) : (
+            <p>
+              <Link to="/evidence">Open Evidence Lab</Link>
+            </p>
+          )}
         </aside>
       ) : null}
     </div>
