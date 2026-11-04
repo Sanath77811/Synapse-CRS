@@ -1,65 +1,72 @@
 import { NavLink, Outlet } from "react-router-dom";
-import { usePlatformContext } from "../context/PlatformContext";
 import { maskToken } from "../auth/session";
-import { StatusChip } from "../components/StatusChip";
+import { usePlatformContext } from "../context/PlatformContext";
 
 const LINKS = [
-  { to: "/", label: "Command", caption: "Centre" },
-  { to: "/telemetry", label: "Telemetry", caption: "Operations" },
-  { to: "/evidence", label: "Evidence", caption: "Lab" },
-  { to: "/investigations", label: "Investigation", caption: "Studio" },
-  { to: "/graph", label: "Threat", caption: "Graph" },
-  { to: "/reasoning", label: "Reasoning", caption: "Engine" },
-  { to: "/hypotheses", label: "Hypothesis", caption: "Arena" },
-  { to: "/defence", label: "Defence", caption: "Lab" },
-  { to: "/research", label: "Research", caption: "Observatory" },
-  { to: "/control", label: "System", caption: "Control" },
+  { to: "/", mark: "⌘", label: "Command" },
+  { to: "/telemetry", mark: "◎", label: "Telemetry" },
+  { to: "/evidence", mark: "▣", label: "Evidence" },
+  { to: "/investigations", mark: "▤", label: "Cases" },
+  { to: "/graph", mark: "◈", label: "Graph" },
+  { to: "/reasoning", mark: "λ", label: "Reasoning" },
+  { to: "/hypotheses", mark: "⇔", label: "Hypotheses" },
+  { to: "/defence", mark: "⬡", label: "Defence" },
+  { to: "/research", mark: "π", label: "Research" },
+  { to: "/control", mark: "⚙", label: "Control" },
 ];
 
 export function Shell() {
   const { mode, token, health, ready, healthError, signOut, enterDemo } = usePlatformContext();
+  const apiOk = health?.status === "ok";
+  const dbOk = ready?.status === "ready";
   return (
     <div className="shell">
       <a className="skip" href="#workspace">
         Skip to workspace
       </a>
       <aside className="rail" aria-label="Workspaces">
-        <div className="brand">
-          <span className="mark" aria-hidden="true" />
-          <div>
-            <strong>SYNAPSE</strong>
-            <em>CRS</em>
-          </div>
-        </div>
+        <NavLink to="/" end className="brand-lock">
+          <span className="mark" />
+          <span className="brand-copy">
+            <b>SYNAPSE</b>
+            <i>CRS</i>
+          </span>
+        </NavLink>
         <nav>
           {LINKS.map((link) => (
             <NavLink key={link.to} to={link.to} end={link.to === "/"} className="rail-link">
+              <em>{link.mark}</em>
               <span>{link.label}</span>
-              <small>{link.caption}</small>
             </NavLink>
           ))}
         </nav>
       </aside>
-      <div className="workspace-wrap">
-        <header className="topbar">
-          <p className="product">Neuro-symbolic investigation operating environment</p>
-          <div className="top-status">
+      <div className="stage">
+        <header className="hud">
+          <p className="hud-title">
+            Investigation environment
+            <span className="hud-sep">/</span>
+            observer only
+          </p>
+          <div className="hud-cluster">
             {mode === "demo" ? <span className="demo-flag">DEMO MODE</span> : null}
-            <StatusChip label={health?.status === "ok" ? "api ok" : healthError ? "api down" : "api"} />
-            <StatusChip label={ready?.status === "ready" ? "db ready" : "db unknown"} />
-            {token ? <span className="mono muted">token {maskToken(token)}</span> : null}
+            <span className={apiOk ? "lamp lamp-ok" : "lamp lamp-off"}>
+              API {apiOk ? "live" : healthError ? "refused" : "idle"}
+            </span>
+            <span className={dbOk ? "lamp lamp-ok" : "lamp lamp-off"}>DB {dbOk ? "ready" : "unknown"}</span>
+            {token ? <span className="mono dim">tok {maskToken(token)}</span> : null}
             {mode === "live" ? (
               <button type="button" className="ghost" onClick={signOut}>
                 Sign out
               </button>
             ) : (
               <button type="button" className="ghost" onClick={enterDemo}>
-                Stay in demo
+                Demo
               </button>
             )}
           </div>
         </header>
-        <main id="workspace" className="workspace">
+        <main id="workspace" className="viewport">
           <Outlet />
         </main>
       </div>

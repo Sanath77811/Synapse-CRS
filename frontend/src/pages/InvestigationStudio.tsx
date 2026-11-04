@@ -1,26 +1,28 @@
 import { useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import { apiRequest } from "../api/client";
-import type { CaseDetail, CaseView } from "../api/types";
-import { DataTable } from "../components/DataTable";
-import { PageHeader } from "../components/PageHeader";
-import { StatusChip } from "../components/StatusChip";
+import type { CaseDetail } from "../api/types";
+import { Timeline } from "../components/Timeline";
 import { usePlatformContext } from "../context/PlatformContext";
 import { demoCase } from "../data/demo";
 import { formatTime, shortId } from "../lib/format";
 
-const NEXT: Record<string, string | null> = {
-  AUTHORIZED_TARGET: "OBSERVATION",
-  OBSERVATION: "EVIDENCE",
-  EVIDENCE: "HYPOTHESIS",
-  HYPOTHESIS: "VERIFICATION",
-  VERIFICATION: "APPROVAL",
-  APPROVAL: "ACTION",
-  ACTION: "VALIDATION",
-  VALIDATION: "ROLLBACK",
-  ROLLBACK: "SEALED_AUDIT",
-  SEALED_AUDIT: null,
-};
+const ORDER = [
+  "AUTHORIZED_TARGET",
+  "OBSERVATION",
+  "EVIDENCE",
+  "HYPOTHESIS",
+  "VERIFICATION",
+  "APPROVAL",
+  "ACTION",
+  "VALIDATION",
+  "ROLLBACK",
+  "SEALED_AUDIT",
+];
+
+const NEXT: Record<string, string | null> = Object.fromEntries(
+  ORDER.map((item, index) => [item, ORDER[index + 1] ?? null]),
+);
 
 export function InvestigationStudio() {
   const { caseId } = useParams();
@@ -29,25 +31,25 @@ export function InvestigationStudio() {
   const [detail, setDetail] = useState<CaseDetail | null>(null);
   const [reason, setReason] = useState("Advance stored pipeline state only");
   const [message, setMessage] = useState<string | null>(null);
-
   useEffect(() => {
-    if (!caseId) {
+    const id = caseId ?? data.cases[0]?.id;
+    if (!id) {
       setDetail(null);
       return;
     }
     if (mode === "demo") {
-      setDetail(caseId === demoCase.id ? demoCase : null);
+      setDetail(id === demoCase.id ? demoCase : null);
       return;
     }
     if (!token) {
       return;
     }
     const controller = new AbortController();
-    void apiRequest<CaseDetail>(`/api/v1/cases/${caseId}`, { token, signal: controller.signal })
+    void apiRequest<CaseDetail>(`/api/v1/cases/${id}`, { token, signal: controller.signal })
       .then(setDetail)
       .catch((err: Error) => setMessage(err.message));
     return () => controller.abort();
-  }, [caseId, mode, token]);
+  }, [caseId, data.cases, mode, token]);
 
   async function advance() {
     if (!detail || mode !== "live" || !token) {
@@ -72,54 +74,79 @@ export function InvestigationStudio() {
     }
   }
 
+  const current = detail;
   return (
-    <div className="page">
-      <PageHeader
-        kicker="Investigation Studio"
-        title="Case pipeline"
-        summary="States are stored pipeline labels. Entering ACTION does not execute a host action."
-      />
-      <section className="panel">
-        <h2>Cases</h2>
-        <DataTable
-          rows={data.cases}
-          selectedId={caseId}
-          onSelect={(row: CaseView) => navigate(`/investigations/${row.id}`)}
-          empty="No cases."
-          columns={[
-            { key: "state", header: "State", render: (row) => <StatusChip label={row.state} /> },
-            { key: "target", header: "Target", mono: true, render: (row) => shortId(row.target_id) },
-            { key: "updated", header: "Updated", render: (row) => formatTime(row.updated_at) },
-          ]}
-        />
+    <div className="dossier">
+      <aside className="dos-list">
+        <h2>Dockets</h2>
+        {data.cases.map((item) => (
+          <button
+            type="button"
+            key={item.id}
+            className={item.id === current?.id ? "dock is-on" : "dock"}
+            onClick={() => navigate(`/investigations/${item.id}`)}
+          >
+            <b>{item.state}</b>
+            <span className="mono">{shortId(item.id)}</span>
+            <span className="dim">{formatTime(item.updated_at)}</span>
+          </button>
+        ))}
+        {data.cases.length === 0 ? <p className="dim">No cases.</p> : null}
+      </aside>
+      <section className="dos-main">
+        {current ? (
+          <>
+            <header className="dos-id">
+              <p className="kicker">Investigation studio</p>
+              <h1>Case {shortId(current.id)}</h1>
+              <p className="dim">ACTION stores a label. It does not change a host.</p>
+            </header>
+            <ol className="state-track">
+              {ORDER.map((state) => (
+                <li key={state} className={state === current.state ? "is-now" : undefined}>
+                  {state.replaceAll("_", " ")}
+                </li>
+              ))}
+            </ol>
+            <div className="dos-split">
+              <div>
+                <h2>Activity</h2>
+                <ol className="timeline">
+                  {current.transitions.map((item) => (
+                    <li key={item.id} className="tl tl-observed">
+                      <div className="tl-meta">
+                        <span className="mono">{formatTime(item.created_at)}</span>
+                        <span>
+                          {item.from_state} → {item.to_state}
+                        </span>
+                      </div>
+                      <p>{item.reason}</p>
+                      <p className="dim">executed={String(item.executed)}</p>
+                    </li>
+                  ))}
+                </ol>
+              </div>
+              <div>
+                <h2>Linked evidence</h2>
+                <p className="dim">Findings in the current snapshot, not a private case join table.</p>
+                {data.findings.map((item) => (
+                  <p key={item.id}>{item.finding_type.replaceAll("_", " ")}</p>
+                ))}
+                {data.timeline ? <Timeline items={data.timeline.timeline.slice(0, 4)} /> : null}
+              </div>
+            </div>
+            {message ? <p className="dim">{message}</p> : null}
+            <div className="row-actions">
+              <input value={reason} onChange={(event) => setReason(event.target.value)} maxLength={200} />
+              <button type="button" className="primary" onClick={() => void advance()}>
+                Next stored state {NEXT[current.state] ?? "—"}
+              </button>
+            </div>
+          </>
+        ) : (
+          <p className="dim pad">Select a docket.</p>
+        )}
       </section>
-      {detail ? (
-        <section className="panel">
-          <h2>Case {shortId(detail.id)}</h2>
-          <p>
-            <StatusChip label={detail.state} /> next {NEXT[detail.state] ?? "none"}
-          </p>
-          <ol className="timeline">
-            {detail.transitions.map((item) => (
-              <li key={item.id} className="tl tl-observed">
-                <div className="tl-meta">
-                  <span className="mono">{formatTime(item.created_at)}</span>
-                  <span className="chip chip-info">{item.from_state} → {item.to_state}</span>
-                </div>
-                <p>{item.reason}</p>
-                <p className="muted">executed={String(item.executed)} · {item.actor}</p>
-              </li>
-            ))}
-          </ol>
-          {message ? <p className="muted">{message}</p> : null}
-          <div className="row-actions">
-            <input value={reason} onChange={(event) => setReason(event.target.value)} maxLength={200} />
-            <button type="button" className="primary" onClick={() => void advance()}>
-              Request next stored transition
-            </button>
-          </div>
-        </section>
-      ) : null}
     </div>
   );
 }

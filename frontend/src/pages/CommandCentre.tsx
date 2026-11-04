@@ -1,109 +1,103 @@
 import { Link } from "react-router-dom";
-import { PageHeader } from "../components/PageHeader";
-import { StatusChip } from "../components/StatusChip";
+import { IntelligenceCore } from "../components/IntelligenceCore";
 import { usePlatformContext } from "../context/PlatformContext";
 import { RESEARCH_PHASES } from "../data/research";
 import { formatTime } from "../lib/format";
 
 export function CommandCentre() {
-  const { mode, data, health, ready, selectedTarget, error, state } = usePlatformContext();
-  const phases = RESEARCH_PHASES;
+  const { data, health, ready, selectedTarget, error, state, mode } = usePlatformContext();
+  const latestFinding = data.findings[0];
+  const latestCase = data.cases[0];
   return (
-    <div className="page">
-      <PageHeader
-        kicker="Command Centre"
-        title="Investigation operating picture"
-        summary="Live control-plane status, registered targets, and research honesty. No autonomous mitigation is available from this console."
-      />
-      {error ? <p className="error-banner">{error}</p> : null}
-      {state === "loading" ? <p className="muted">Loading control-plane snapshot…</p> : null}
-      <section className="stat-grid">
-        <article className="stat">
-          <span>API</span>
-          <strong>{health?.status ?? "unknown"}</strong>
-          <small>{health?.version ?? "unversioned probe"}</small>
-        </article>
-        <article className="stat">
-          <span>Database</span>
-          <strong>{ready?.database ?? ready?.status ?? "unknown"}</strong>
-        </article>
-        <article className="stat">
-          <span>Targets</span>
-          <strong>{data.targets.length}</strong>
-        </article>
-        <article className="stat">
-          <span>Agents enrolled</span>
-          <strong>{data.agents.length}</strong>
-          <small>Enrollment is not proof of recent telemetry</small>
-        </article>
-        <article className="stat">
-          <span>Findings</span>
-          <strong>{data.findings.length}</strong>
-        </article>
-        <article className="stat">
-          <span>Assessments</span>
-          <strong>{data.assessments.length}</strong>
-        </article>
-      </section>
-      <div className="split">
-        <section className="panel">
-          <h2>Selected target</h2>
-          {selectedTarget ? (
-            <>
-              <p>
-                <strong>{selectedTarget.name}</strong>{" "}
-                <StatusChip label={selectedTarget.authorization_status} />
-              </p>
-              <p className="muted wrap">{selectedTarget.scope.description}</p>
-              <p className="mono muted">{selectedTarget.id}</p>
-              <p>Expiry {formatTime(selectedTarget.authorization_expiry)}</p>
-              <div className="chip-row">
-                {selectedTarget.allowed_capabilities.map((item) => (
-                  <StatusChip key={item} label={item} />
-                ))}
-              </div>
-            </>
-          ) : (
-            <p className="muted">No target in this snapshot.</p>
-          )}
-        </section>
-        <section className="panel">
-          <h2>Recent cases</h2>
-          <ul className="plain-list">
-            {data.cases.slice(0, 5).map((item) => (
-              <li key={item.id}>
-                <Link to={`/investigations/${item.id}`}>{item.state}</Link>
-                <span className="muted mono"> {formatTime(item.updated_at)}</span>
-              </li>
-            ))}
-            {data.cases.length === 0 ? <li className="muted">No cases.</li> : null}
-          </ul>
-        </section>
-        <section className="panel">
-          <h2>Correlation</h2>
-          <p>
-            Risk score {data.risk?.score ?? "—"} · formula {data.risk?.formula ?? "unavailable"}
-          </p>
-          <p className="muted">Score is a documented point sum, not a probability of compromise.</p>
-          <Link to="/graph">Open threat graph</Link>
-        </section>
-      </div>
-      <section className="panel">
-        <h2>Research status</h2>
-        <p className="muted">
-          Mode: {mode}. Independent public-dataset validation remains incomplete for Phases 11–13.
+    <div className="command">
+      <aside className="zone zone-health">
+        <h2>Plant</h2>
+        <ol className="meters">
+          <li>
+            <span>Control plane</span>
+            <b>{health?.status ?? "offline"}</b>
+            <i style={{ width: health?.status === "ok" ? "82%" : "18%" }} />
+          </li>
+          <li>
+            <span>Store</span>
+            <b>{ready?.status ?? "unknown"}</b>
+            <i style={{ width: ready?.status === "ready" ? "76%" : "22%" }} />
+          </li>
+          <li>
+            <span>Enrolled agents</span>
+            <b>{data.agents.length}</b>
+            <i style={{ width: `${Math.min(100, data.agents.length * 34)}%` }} />
+          </li>
+          <li>
+            <span>Findings</span>
+            <b>{data.findings.length}</b>
+            <i style={{ width: `${Math.min(100, 20 + data.findings.length * 20)}%` }} />
+          </li>
+        </ol>
+        <p className="dim note">Enrollment is not receipt of telemetry. Ingest is signed POST only.</p>
+      </aside>
+      <section className="zone zone-core">
+        {error ? <p className="error-banner">{error}</p> : null}
+        {state === "loading" ? <p className="dim">Assembling snapshot…</p> : null}
+        <IntelligenceCore />
+        <p className="core-caption">
+          Spatial map of registered targets, findings and assessments in this snapshot.
+          {mode === "demo" ? " Synthetic lab geometry." : ""} Not a live packet radar.
         </p>
-        <ul className="phase-list">
-          {phases.map((phase) => (
+      </section>
+      <aside className="zone zone-side">
+        <h2>Target lock</h2>
+        {selectedTarget ? (
+          <div className="lock-card">
+            <strong>{selectedTarget.name}</strong>
+            <span className="mono wrap">{selectedTarget.id}</span>
+            <span>{selectedTarget.authorization_status}</span>
+            <span className="dim">{selectedTarget.scope.environment}</span>
+          </div>
+        ) : (
+          <p className="dim">No target.</p>
+        )}
+        <h2>Latest finding</h2>
+        {latestFinding ? (
+          <Link className="ribbon" to="/evidence">
+            <b>{latestFinding.finding_type.replaceAll("_", " ")}</b>
+            <span>{latestFinding.epistemic_status}</span>
+            <span className="dim">{latestFinding.explanation}</span>
+          </Link>
+        ) : (
+          <p className="dim">None.</p>
+        )}
+        <h2>Research honesty</h2>
+        <ul className="stamp-list">
+          {RESEARCH_PHASES.map((phase) => (
             <li key={phase.id}>
-              <strong>{phase.title}</strong>
-              <StatusChip label={phase.scientific} />
-              <p>{phase.summary}</p>
+              <em>{phase.id}</em>
+              <span>{phase.scientific}</span>
             </li>
           ))}
         </ul>
-        <Link to="/research">Open research observatory</Link>
-      </section>
+        <Link to="/research">Observatory →</Link>
+      </aside>
+      <footer className="zone zone-tape">
+        <h2>Activity tape</h2>
+        <div className="tape">
+          {data.audit.slice(0, 8).map((item) => (
+            <div key={item.id} className="tape-cell">
+              <span className="mono">{formatTime(item.timestamp)}</span>
+              <b>{item.event_type}</b>
+              <span className="dim">{item.actor}</span>
+            </div>
+          ))}
+          {latestCase ? (
+            <Link className="tape-cell" to={`/investigations/${latestCase.id}`}>
+              <span className="mono">{formatTime(latestCase.updated_at)}</span>
+              <b>case {latestCase.state}</b>
+              <span className="dim">open studio</span>
+            </Link>
+          ) : null}
+          {data.audit.length === 0 && !latestCase ? <p className="dim">No audit or case activity.</p> : null}
+        </div>
+      </footer>
     </div>
   );
 }

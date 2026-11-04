@@ -1,7 +1,6 @@
 import { FormEvent, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { usePlatformContext } from "../context/PlatformContext";
-import { PageHeader } from "../components/PageHeader";
 
 export function SignIn() {
   const { enterLive, enterDemo, healthError, health } = usePlatformContext();
@@ -19,48 +18,44 @@ export function SignIn() {
   }
 
   return (
-    <div className="sign-in">
-      <PageHeader
-        kicker="Access"
-        title="Operator session"
-        summary="Control-plane routes require a bearer token from SYNAPSE_AUTH_TOKENS. The token is stored only in sessionStorage and is never rendered in full."
-      />
-      {healthError ? (
-        <p className="error-banner">
-          API is unreachable ({healthError}). Use demonstration mode rather than inventing live
-          telemetry.
-        </p>
-      ) : (
-        <p className="muted">Control plane {health?.status ?? "unchecked"}.</p>
-      )}
-      <form className="panel form" onSubmit={onSubmit}>
-        <label>
-          Bearer token
-          <input
-            type="password"
-            autoComplete="off"
-            minLength={16}
-            value={token}
-            onChange={(event) => setToken(event.target.value)}
-            placeholder="paste viewer or admin token"
-          />
-        </label>
-        <div className="row-actions">
-          <button type="submit" className="primary">
-            Connect to live API
-          </button>
-          <button
-            type="button"
-            className="ghost"
-            onClick={() => {
-              enterDemo();
-              navigate("/");
-            }}
-          >
-            Enter demonstration mode
-          </button>
-        </div>
-      </form>
+    <div className="lock">
+      <div className="lock-copy">
+        <p className="kicker">Synapse-CRS</p>
+        <h1>Operator lock</h1>
+        <p>Bearer token from SYNAPSE_AUTH_TOKENS. Stored in sessionStorage only. Full token is never rendered.</p>
+        {healthError ? (
+          <p className="error-banner">API unreachable ({healthError}). Use demonstration mode.</p>
+        ) : (
+          <p className="dim">Control plane {health?.status ?? "unchecked"}.</p>
+        )}
+        <form onSubmit={onSubmit}>
+          <label>
+            Token
+            <input
+              type="password"
+              autoComplete="off"
+              minLength={16}
+              value={token}
+              onChange={(event) => setToken(event.target.value)}
+            />
+          </label>
+          <div className="row-actions">
+            <button type="submit" className="primary">
+              Connect live
+            </button>
+            <button
+              type="button"
+              className="ghost"
+              onClick={() => {
+                enterDemo();
+                navigate("/");
+              }}
+            >
+              Demonstration mode
+            </button>
+          </div>
+        </form>
+      </div>
     </div>
   );
 }
