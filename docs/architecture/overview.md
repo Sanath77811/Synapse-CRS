@@ -19,15 +19,17 @@ FastAPI  ---- PostgreSQL
   +-- packages/policy
   +-- packages/cases
   +-- packages/audit
+  +-- packages/telemetry
+  +-- packages/agent
 ```
 
-Enrolled agents may POST signed telemetry to `/api/v1/telemetry/ingest`. There is no collector, evidence runner, model client, solver, or mitigation executor.
+Enrolled agents may POST signed telemetry to `/api/v1/telemetry/ingest`. The Linux collector in `packages/agent` polls procfs and uses that endpoint. There is no evidence runner, model client, solver, or mitigation executor.
 
 ## Request path
 
 1. The process refuses to start when `DATABASE_URL` or `SYNAPSE_AUTH_TOKENS` is missing or unsafe.
 2. `/health` does not touch the database. `/ready` runs `SELECT 1`.
-3. `/api/v1/*` requires a bearer token. The actor name stored in audit events comes from the token record, not from the request body.
+3. Control-plane `/api/v1/*` routes require a bearer token. Telemetry ingest authenticates with a detached signature against the enrolled public key. The actor name stored in control-plane audit events comes from the token record, not from the request body.
 4. Writes require the `admin` role. Reads accept `admin` or `viewer`.
 5. Creating a target rejects a past expiry, an unknown capability, and a scope outside `lab` or `development`.
 6. Opening or advancing a case loads the target and runs `evaluate_authorization`. Any failed check returns 409 and leaves the case unchanged.

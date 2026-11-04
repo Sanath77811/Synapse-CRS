@@ -42,6 +42,7 @@ pythonpath = [
     "packages/audit/src",
     "packages/cases/src",
     "packages/telemetry/src",
+    "packages/agent/src",
     "apps/api/src",
 ]
 

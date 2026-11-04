@@ -1,5 +1,17 @@
-# Lab agent
+# Linux telemetry agent
 
-The runtime agent is not part of v0.1.
+The collector lives in `packages/agent/src/synapse_agent`.
 
-v0.2 is the first version planned to enroll a Python lab agent on an owned host. Until that work is specified, reviewed, and tested, this directory intentionally contains no agent, no command runner, and no network client.
+```bash
+.venv/bin/python -m synapse_agent
+```
+
+End-to-end laboratory demonstration:
+
+```bash
+make demo-agent
+```
+
+The agent polls procfs, normalizes and signs observations, and POSTs them to the existing ingest API. Enrollment remains an administrator action. Private keys stay on the monitored host.
+
+See `docs/architecture/linux-agent.md` and `docs/guides/linux-agent-setup.md`.

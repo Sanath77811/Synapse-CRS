@@ -18,7 +18,7 @@ The short project statement above is the goal. It is not a description of what t
 - Append-only audit events with a SHA-256 hash chain.
 - Bearer-token authentication and an admin/viewer role split.
 - pytest suite, ruff, Docker Compose, and GitHub Actions.
-- Telemetry observation contract 1.0.0, allowlist redaction, Ed25519 signing, and a PostgreSQL evidence store for verified envelopes. Identity remains unverified until enrollment exists. See [docs/architecture/telemetry-evidence-store.md](docs/architecture/telemetry-evidence-store.md).
+- Telemetry observation contract 1.0.0, allowlist redaction, Ed25519 signing, PostgreSQL evidence store, administrator agent enrollment, HTTP ingest, and a Linux procfs collector. See [docs/architecture/linux-agent.md](docs/architecture/linux-agent.md).
 
 ## Explicit non-goals of v0.1
 
@@ -27,8 +27,8 @@ The short project statement above is the goal. It is not a description of what t
 - Automatic binary patching or hotpatching
 - Zero-downtime remediation
 - Mathematical proof of system security
-- eBPF, Z3, NetworkX, or a runtime agent
-- Connections to registered targets
+- eBPF, Z3, NetworkX, or autonomous response
+- Connections that change a registered target
 
 ## Repository layout
 
@@ -39,8 +39,9 @@ packages/policy    Target eligibility decisions
 packages/cases     Case transition rules
 packages/audit     Hash-chain helpers
 packages/telemetry Observation contracts, Ed25519 signatures, offline demo
+packages/agent     Linux procfs collector and ingest client
 frontend/          Minimal React status page
-agent/             Placeholder. The lab agent starts in v0.2.
+agent/             Pointer to the Linux collector package
 schemas/           JSON Schema 2020-12 contracts, version 1.0.0
 tests/             Unit tests and PostgreSQL integration tests
 docs/              Architecture, threat model, decisions, safety, roadmap
@@ -92,7 +93,7 @@ python3 -m venv .venv
 .venv/bin/ruff format --check .
 ```
 
-`make install`, `make test`, and `make lint` wrap the same commands. pytest, the API, and Alembic read `.env` directly and then point the test suite at `synapse_test` so it does not truncate the development database. Do not `source .env`; a shell will mangle the token JSON.
+`make install`, `make test`, `make lint`, and `make demo-agent` wrap common commands. The Linux collector demo is documented in [docs/guides/linux-agent-demo.md](docs/guides/linux-agent-demo.md). pytest, the API, and Alembic read `.env` directly and then point the test suite at `synapse_test` so it does not truncate the development database. Do not `source .env`; a shell will mangle the token JSON.
 
 Status page:
 

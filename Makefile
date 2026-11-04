@@ -1,7 +1,7 @@
-PYTHONPATH := packages/contracts/src:packages/policy/src:packages/audit/src:packages/cases/src:packages/telemetry/src:apps/api/src
+PYTHONPATH := packages/contracts/src:packages/policy/src:packages/audit/src:packages/cases/src:packages/telemetry/src:packages/agent/src:apps/api/src
 export PYTHONPATH
 
-.PHONY: install test lint format api migrate demo demo-persist
+.PHONY: install test lint format api migrate demo demo-persist demo-agent
 
 install:
 	python3 -m venv .venv
@@ -30,3 +30,6 @@ demo:
 
 demo-persist:
 	.venv/bin/python -m synapse_api.telemetry_persist_demo
+
+demo-agent:
+	.venv/bin/python -m synapse_agent.demo
