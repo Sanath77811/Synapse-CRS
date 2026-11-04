@@ -1,8 +1,8 @@
 """Persist cryptographically verified telemetry evidence.
 
 A stored row means Ed25519 verification succeeded for the supplied public
-key. It does not mean the agent is enrolled or the target is authorized.
-identity_status is always ``unverified``.
+key. identity_status is derived from registered agents and current target
+eligibility. Callers cannot supply it.
 """
 
 from collections.abc import Mapping
@@ -25,9 +25,11 @@ from synapse_telemetry.signatures import (
 )
 
 from synapse_api.clock import utc_now
+from synapse_api.enrollment import evaluate_identity
 from synapse_api.models import TelemetryEventRow
 
 IDENTITY_STATUS = "unverified"
+IDENTITY_STATUS_ENROLLED = "enrolled"
 PAGE_MIN = 1
 PAGE_MAX = 100
 
@@ -85,7 +87,10 @@ def persist_verified_event(
     *,
     received_at: datetime | None = None,
 ) -> PersistResult:
-    """Verify, then insert. Caller-supplied verification flags are ignored."""
+    """Verify the signature, then derive identity, then insert.
+
+    Caller-supplied verification flags and identity labels are ignored.
+    """
     if not isinstance(public_key, VerificationKey):
         raise PersistenceError("invalid_signature", "telemetry verification key is invalid")
     try:
@@ -107,6 +112,19 @@ def persist_verified_event(
     key_hex = public_key.raw_bytes().hex()
     fingerprint = public_key_fingerprint(public_key)
     received = received_at or utc_now()
+    decision = evaluate_identity(
+        session,
+        envelope.agent_id,
+        envelope.target_id,
+        public_key,
+        received,
+    )
+    if decision.status == "unknown_agent":
+        identity_status = IDENTITY_STATUS
+    elif decision.status == "enrolled":
+        identity_status = IDENTITY_STATUS_ENROLLED
+    else:
+        raise PersistenceError(decision.status, "agent identity is not authorized")
     row = TelemetryEventRow(
         id=uuid4(),
         event_id=envelope.event_id,
@@ -122,7 +140,7 @@ def persist_verified_event(
         public_key_hex=key_hex,
         public_key_fingerprint=fingerprint,
         signature_verified=True,
-        identity_status=IDENTITY_STATUS,
+        identity_status=identity_status,
         received_at=received,
     )
     nested = session.begin_nested()

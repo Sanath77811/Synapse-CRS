@@ -7,6 +7,7 @@ import pytest
 from jsonschema import Draft202012Validator, FormatChecker
 from pydantic import ValidationError
 from referencing import Registry, Resource
+from synapse_contracts.agents import AgentEnroll
 from synapse_contracts.cases import CaseCreate, CaseTransitionRequest
 from synapse_contracts.errors import ErrorResponse
 from synapse_contracts.targets import TargetCreate
@@ -72,3 +73,10 @@ def test_scope_schema_rejects_unbounded_asset() -> None:
         from synapse_contracts.scope import TargetScope
 
         TargetScope.model_validate(rejected)
+
+
+def test_agent_enroll_rejects_private_key_fields() -> None:
+    body = {"public_key_hex": "ab" * 32, "private_key_hex": "cd" * 32}
+    with pytest.raises(ValidationError):
+        AgentEnroll.model_validate(body)
+    AgentEnroll.model_validate({"public_key_hex": "ab" * 32})

@@ -42,6 +42,14 @@ One row per accepted move: `from_state`, `to_state`, `actor`, `reason`, `created
 
 `sequence` is an implementation field. It gives the chain a total order. The first event uses the genesis previous hash of 64 zero characters. The hash is SHA-256 over a canonical JSON object containing the previous hash, event id, sequence, UTC timestamp, actor, event type, target id, case id, and payload.
 
+## agents
+
+One current registration per agent id. `target_id` references `targets.id` and cannot change. `public_key_hex` is unique. `status` is `active` or `revoked`. Private keys are not stored. See [agent-enrollment.md](agent-enrollment.md).
+
+## telemetry_events
+
+Append-only signed envelopes. `identity_status` is `unverified` or `enrolled` and is derived by the API, not by the caller.
+
 ## audit_chain_state
 
 A single row (`id = 1`) holds `next_sequence` and `head_hash`. It is bookkeeping. Chain verification replays `audit_events` and does not trust this row.

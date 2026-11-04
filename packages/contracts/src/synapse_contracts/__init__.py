@@ -1,5 +1,6 @@
 """Versioned Synapse-CRS contracts shared by the API and tests."""
 
+from synapse_contracts.agents import AgentEnroll, AgentKeyRotate, AgentPage, AgentView
 from synapse_contracts.audit import AuditEventView, ChainVerificationView
 from synapse_contracts.cases import (
     CaseCreate,
@@ -25,6 +26,10 @@ from synapse_contracts.version import API_VERSION, CONTRACT_VERSION
 __all__ = [
     "API_VERSION",
     "CONTRACT_VERSION",
+    "AgentEnroll",
+    "AgentKeyRotate",
+    "AgentPage",
+    "AgentView",
     "AuditEventView",
     "AuthorizationStatus",
     "Capability",

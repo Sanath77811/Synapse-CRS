@@ -9,7 +9,7 @@ from synapse_contracts.version import API_VERSION
 
 from synapse_api.config import get_settings
 from synapse_api.errors import register_exception_handlers
-from synapse_api.routers import audit, cases, health, targets
+from synapse_api.routers import agents, audit, cases, health, targets
 
 logger = logging.getLogger("synapse.api")
 
@@ -55,6 +55,7 @@ def create_app() -> FastAPI:
     register_exception_handlers(app)
     app.include_router(health.router)
     app.include_router(targets.router)
+    app.include_router(agents.router)
     app.include_router(cases.router)
     app.include_router(audit.router)
 

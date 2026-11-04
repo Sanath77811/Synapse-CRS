@@ -138,8 +138,8 @@ def reset_tables(migration_url: str) -> None:
         connection.execute(text("ALTER TABLE telemetry_events DISABLE TRIGGER USER"))
         connection.execute(
             text(
-                "TRUNCATE TABLE telemetry_events, audit_events, case_transitions, cases, targets "
-                "RESTART IDENTITY CASCADE"
+                "TRUNCATE TABLE telemetry_events, agents, audit_events, case_transitions, "
+                "cases, targets RESTART IDENTITY CASCADE"
             )
         )
         connection.execute(

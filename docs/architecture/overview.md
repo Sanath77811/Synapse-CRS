@@ -12,6 +12,8 @@ FastAPI  ---- PostgreSQL
   |            case_transitions
   |            audit_events        (append-only)
   |            audit_chain_state   (mutable counter)
+  |            agents              (enrolled identities)
+  |            telemetry_events    (append-only evidence)
   |
   +-- packages/contracts
   +-- packages/policy
@@ -58,6 +60,8 @@ AUTHORIZED_TARGET
 | `case_transitions` | Transition history | Insert |
 | `audit_events` | Hash-chained history | Insert |
 | `audit_chain_state` | Next sequence and head hash | Update of the single bookkeeping row |
+| `agents` | Enrolled agent identity, public key, target binding | Insert and enrollment-lifecycle update |
+| `telemetry_events` | Signed telemetry evidence | Insert only |
 
 The API does not expose delete routes for these tables.
 

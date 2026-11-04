@@ -6,9 +6,7 @@ Three facts stay distinct:
 
 1. The envelope passed Phase 1 validation.
 2. Ed25519 verification succeeded for the supplied public key (`signature_verified = true`).
-3. Agent identity is **not** authorized (`identity_status = unverified`).
-
-A caller can generate a key and sign a self-asserted `agent_id`. Replay protection does not fix that. Enrollment is a later phase.
+3. Agent identity is **server-derived**. Unknown agents store `identity_status = unverified`. Enrolled, target-authorized agents store `enrolled`. Other identity failures reject the insert. Callers cannot supply this field. See [agent-enrollment.md](agent-enrollment.md).
 
 This module does not collect `/proc`, ingest over HTTP, or write raw observations.
 
@@ -27,7 +25,7 @@ This module does not collect `/proc`, ingest over HTTP, or write raw observation
 | `public_key_hex` | 32-byte public key as 64 lowercase hex characters |
 | `public_key_fingerprint` | `sha256:` plus hex digest of those 32 bytes |
 | `signature_verified` | Always true for stored rows |
-| `identity_status` | Always `unverified` |
+| `identity_status` | `unverified` or `enrolled`; never caller-supplied |
 | `received_at` | Server UTC receipt time |
 
 There is no foreign key to `targets`. A signed event may name a target that is not registered.
@@ -39,7 +37,7 @@ Private keys, command lines, raw IP addresses, environment values, and other Pha
 - Unique `event_id`
 - Unique `(agent_id, boot_id, sequence)`
 - Indexes on `target_id`, `agent_id`, `event_type`, and `(observed_at, event_id)`
-- Check constraints on event type, sequence range, schema version, signature shape, key hex, fingerprint, `signature_verified IS TRUE`, and `identity_status = 'unverified'`
+- Check constraints on event type, sequence range, schema version, signature shape, key hex, fingerprint, `signature_verified IS TRUE`, and `identity_status IN ('unverified', 'enrolled')`
 - Triggers reject `UPDATE`, `DELETE`, and `TRUNCATE`
 
 ## Persistence workflow
@@ -48,10 +46,11 @@ Private keys, command lines, raw IP addresses, environment values, and other Pha
 
 1. Validate the envelope with `TelemetryEnvelope`.
 2. Verify with `verify_event` (existing Phase 2 API, including canonicalization).
-3. Insert in a savepoint.
-4. On unique violation, re-read and classify the conflict.
+3. Derive identity from the `agents` table and current target eligibility.
+4. Insert in a savepoint.
+5. On unique violation, re-read and classify the conflict.
 
-Caller-supplied “already verified” flags are ignored. Insert happens only after verification succeeds.
+Caller-supplied “already verified” flags and identity labels are ignored. Insert happens only after verification succeeds. Historical rows are never rewritten.
 
 ### Duplicate handling
 
@@ -103,9 +102,9 @@ or
 
 ## Limitations
 
-- No enrollment, no authorized agent identity
 - No HTTP ingestion
 - No collector
 - Signature verification is not target authorization
+- Unknown-agent evidence remains `unverified` by design
 - A new boot identity can start a new sequence
 - The migration owner can still disable triggers
