@@ -5,7 +5,7 @@ import { RESEARCH_PHASES } from "../data/research";
 import { formatTime } from "../lib/format";
 
 export function CommandCentre() {
-  const { data, health, ready, selectedTarget, error, state, mode } = usePlatformContext();
+  const { data, health, ready, selectedTarget, error, state, mode, source } = usePlatformContext();
   const latestFinding = data.findings[0];
   const latestCase = data.cases[0];
   return (
@@ -42,7 +42,7 @@ export function CommandCentre() {
         <IntelligenceCore />
         <p className="core-caption">
           Spatial map of registered targets, findings and assessments in this snapshot.
-          {mode === "demo" ? " Synthetic lab geometry." : ""} Not a live packet radar.
+          Source={source}. {mode === "demo" ? "Synthetic lab geometry." : ""} Not a live packet radar.
         </p>
       </section>
       <aside className="zone zone-side">
@@ -71,7 +71,7 @@ export function CommandCentre() {
         <ul className="stamp-list">
           {RESEARCH_PHASES.map((phase) => (
             <li key={phase.id}>
-              <em>{phase.id}</em>
+              <Link to={`/research/${phase.id}`}>{phase.id}</Link>
               <span>{phase.scientific}</span>
             </li>
           ))}

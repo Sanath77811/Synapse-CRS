@@ -362,7 +362,7 @@ input, select {
 .ops-strip, .arena-head { display: flex; justify-content: space-between; gap: 1rem; align-items: end; }
 .ops-lamps { display: flex; gap: 0.8rem; color: var(--dim); font-family: var(--mono); font-size: 0.75rem; }
 .ops-channels { display: flex; gap: 0.6rem; overflow-x: auto; }
-.channel { min-width: 200px; border: 1px solid var(--line); padding: 0.6rem; }
+.channel { min-width: 200px; border: 1px solid var(--line); padding: 0.6rem; text-align: left; }
 .ops-grid { display: grid; grid-template-columns: 1.1fr 0.9fr; gap: 1rem; }
 .agent-matrix { display: grid; gap: 0.45rem; }
 .agent-cell { text-align: left; display: grid; }
@@ -445,4 +445,42 @@ input, select {
 }
 @media (prefers-reduced-motion: reduce) {
   * { animation: none !important; transition: none !important; }
+}
+
+.hud-error { margin: 0; border-radius: 0; border-left: 0; border-right: 0; }
+.kind-toggles {
+  display: flex;
+  gap: 0.55rem;
+  flex-wrap: wrap;
+  font-size: 0.72rem;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: var(--dim);
+}
+.kind-toggles label { display: flex; gap: 0.25rem; align-items: center; }
+.kind-toggles input { width: auto; }
+.channel.is-on { border-color: var(--cyan); }
+.note-open { max-width: 48rem; transform: none; }
+.ghost { text-decoration: none; display: inline-flex; align-items: center; }
+.palette-back {
+  position: fixed;
+  inset: 0;
+  background: rgba(4, 6, 10, 0.72);
+  z-index: 30;
+  display: grid;
+  place-items: start center;
+  padding-top: 12vh;
+}
+.palette {
+  width: min(560px, calc(100% - 24px));
+  background: #0b121b;
+  border: 1px solid var(--line);
+  padding: 0.7rem;
+}
+.palette ul { list-style: none; padding: 0; margin: 0.4rem 0; max-height: 50vh; overflow: auto; }
+.palette li button { width: 100%; text-align: left; border: 0; padding: 0.45rem 0.3rem; }
+.palette li button:hover, .palette li button:focus { color: var(--cyan); }
+.focus-ring:focus-visible, button:focus-visible, a:focus-visible, input:focus-visible {
+  outline: 2px solid var(--cyan);
+  outline-offset: 2px;
 }

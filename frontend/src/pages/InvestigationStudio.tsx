@@ -31,6 +31,7 @@ export function InvestigationStudio() {
   const [detail, setDetail] = useState<CaseDetail | null>(null);
   const [reason, setReason] = useState("Advance stored pipeline state only");
   const [message, setMessage] = useState<string | null>(null);
+  const [filter, setFilter] = useState("");
   useEffect(() => {
     const id = caseId ?? data.cases[0]?.id;
     if (!id) {
@@ -79,7 +80,18 @@ export function InvestigationStudio() {
     <div className="dossier">
       <aside className="dos-list">
         <h2>Dockets</h2>
-        {data.cases.map((item) => (
+        <input
+          value={filter}
+          onChange={(event) => setFilter(event.target.value)}
+          placeholder="filter state or id…"
+          aria-label="Filter cases"
+        />
+        {data.cases
+          .filter((item) => {
+            const q = filter.trim().toLowerCase();
+            return !q || item.state.toLowerCase().includes(q) || item.id.toLowerCase().includes(q);
+          })
+          .map((item) => (
           <button
             type="button"
             key={item.id}

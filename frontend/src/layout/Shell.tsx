@@ -1,8 +1,10 @@
-import { NavLink, Outlet } from "react-router-dom";
+import { Link, NavLink, Outlet, useLocation } from "react-router-dom";
 import { maskToken } from "../auth/session";
+import { CommandPalette } from "../components/CommandPalette";
+import { ErrorBoundary } from "../components/ErrorBoundary";
 import { usePlatformContext } from "../context/PlatformContext";
 
-const LINKS = [
+export const LINKS = [
   { to: "/", mark: "⌘", label: "Command" },
   { to: "/telemetry", mark: "◎", label: "Telemetry" },
   { to: "/evidence", mark: "▣", label: "Evidence" },
@@ -16,9 +18,26 @@ const LINKS = [
 ];
 
 export function Shell() {
-  const { mode, token, health, ready, healthError, signOut, enterDemo } = usePlatformContext();
+  const location = useLocation();
+  const {
+    mode,
+    token,
+    health,
+    ready,
+    healthError,
+    signOut,
+    enterDemo,
+    refresh,
+    selectedTarget,
+    source,
+    error,
+    authStatus,
+  } = usePlatformContext();
   const apiOk = health?.status === "ok";
   const dbOk = ready?.status === "ready";
+  const workspace = LINKS.find((item) =>
+    item.to === "/" ? location.pathname === "/" : location.pathname.startsWith(item.to),
+  );
   return (
     <div className="shell">
       <a className="skip" href="#workspace">
@@ -44,17 +63,28 @@ export function Shell() {
       <div className="stage">
         <header className="hud">
           <p className="hud-title">
-            Investigation environment
+            {workspace?.label ?? "Workspace"}
             <span className="hud-sep">/</span>
-            observer only
+            {selectedTarget?.name ?? "no target lock"}
+            <span className="hud-sep">/</span>
+            {source}
           </p>
           <div className="hud-cluster">
             {mode === "demo" ? <span className="demo-flag">DEMO MODE</span> : null}
             <span className={apiOk ? "lamp lamp-ok" : "lamp lamp-off"}>
               API {apiOk ? "live" : healthError ? "refused" : "idle"}
             </span>
-            <span className={dbOk ? "lamp lamp-ok" : "lamp lamp-off"}>DB {dbOk ? "ready" : "unknown"}</span>
+            <span className={dbOk ? "lamp lamp-ok" : "lamp lamp-off"}>
+              DB {dbOk ? "ready" : "unknown"}
+            </span>
+            {authStatus === "rejected" ? <span className="lamp lamp-off">auth rejected</span> : null}
             {token ? <span className="mono dim">tok {maskToken(token)}</span> : null}
+            <Link className="ghost" to="/session">
+              Session
+            </Link>
+            <button type="button" className="ghost" onClick={refresh}>
+              Refresh
+            </button>
             {mode === "live" ? (
               <button type="button" className="ghost" onClick={signOut}>
                 Sign out
@@ -66,10 +96,14 @@ export function Shell() {
             )}
           </div>
         </header>
+        {error && mode === "live" ? <p className="error-banner hud-error">{error}</p> : null}
         <main id="workspace" className="viewport">
-          <Outlet />
+          <ErrorBoundary>
+            <Outlet />
+          </ErrorBoundary>
         </main>
       </div>
+      <CommandPalette />
     </div>
   );
 }

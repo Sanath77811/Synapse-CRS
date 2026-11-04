@@ -7,15 +7,33 @@ import { formatTime, shortId } from "../lib/format";
 
 export function EvidenceLab() {
   const { data, mode } = usePlatformContext();
+  const [query, setQuery] = useState("");
   const [finding, setFinding] = useState<FindingView | null>(data.findings[0] ?? null);
   const [event, setEvent] = useState<SupportingEventView | null>(null);
+  const q = query.trim().toLowerCase();
+  const findings = data.findings.filter((item) => {
+    if (!q) {
+      return true;
+    }
+    return (
+      item.finding_type.toLowerCase().includes(q) ||
+      item.explanation.toLowerCase().includes(q) ||
+      item.supporting_events.some((row) => row.event_type.toLowerCase().includes(q))
+    );
+  });
   return (
     <div className="forensic">
       <aside className="fx-tree">
         <h2>Explorer</h2>
         <p className="dim">Findings → supporting events. No invented process trees.</p>
+        <input
+          value={query}
+          onChange={(change) => setQuery(change.target.value)}
+          placeholder="filter evidence…"
+          aria-label="Filter evidence"
+        />
         <ul className="tree">
-          {data.findings.map((item) => (
+          {findings.map((item) => (
             <li key={item.id}>
               <button
                 type="button"

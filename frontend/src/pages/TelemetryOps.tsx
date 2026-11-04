@@ -5,7 +5,7 @@ import { usePlatformContext } from "../context/PlatformContext";
 import { formatTime, shortId } from "../lib/format";
 
 export function TelemetryOps() {
-  const { data, selectedTarget, mode } = usePlatformContext();
+  const { data, selectedTarget, setSelectedTargetId, mode } = usePlatformContext();
   const [agent, setAgent] = useState<AgentView | null>(null);
   const events = useMemo(
     () => data.findings.flatMap((item) => item.supporting_events),
@@ -27,14 +27,19 @@ export function TelemetryOps() {
       </header>
       <section className="ops-channels">
         {data.targets.map((item) => (
-          <article key={item.id} className="channel">
+          <button
+            type="button"
+            key={item.id}
+            className={item.id === selectedTarget?.id ? "channel is-on" : "channel"}
+            onClick={() => setSelectedTargetId(item.id)}
+          >
             <header>
               <b>{item.name}</b>
               <span>{item.authorization_status}</span>
             </header>
             <p className="mono wrap">{item.id}</p>
             <p className="dim">{item.scope.environment}</p>
-          </article>
+          </button>
         ))}
       </section>
       <section className="ops-grid">

@@ -1,77 +1,45 @@
 import { useMemo, useState } from "react";
-import type { Edge, Node } from "@xyflow/react";
 import { Field } from "../components/DetailPanel";
 import { GraphCanvas } from "../components/GraphCanvas";
 import { usePlatformContext } from "../context/PlatformContext";
-import { shortId } from "../lib/format";
+import { graphFromSnapshot } from "../lib/graphFromSnapshot";
+
+const KINDS = ["target", "agent", "finding", "event"] as const;
 
 export function ThreatGraph() {
   const { data, selectedTarget, mode } = usePlatformContext();
   const [selected, setSelected] = useState<string | null>(null);
   const [query, setQuery] = useState("");
-  const { nodes, edges } = useMemo(() => {
-    const nextNodes: Node[] = [];
-    const nextEdges: Edge[] = [];
-    const add = (id: string, kind: string, title: string) => {
-      if (!nextNodes.some((node) => node.id === id)) {
-        nextNodes.push({
-          id,
-          type: "kind",
-          data: { kind, title },
-          position: { x: 0, y: 0 },
-        });
-      }
-    };
-    if (selectedTarget) {
-      add(selectedTarget.id, "target", selectedTarget.name);
-    }
-    for (const agent of data.agents) {
-      add(agent.id, "agent", shortId(agent.id));
-      if (selectedTarget) {
-        nextEdges.push({ id: `t-a-${agent.id}`, source: selectedTarget.id, target: agent.id, label: "enrolled" });
-      }
-    }
-    for (const finding of data.findings) {
-      add(finding.id, "finding", finding.finding_type.replaceAll("_", " "));
-      if (selectedTarget) {
-        nextEdges.push({ id: `t-f-${finding.id}`, source: selectedTarget.id, target: finding.id, label: "finding" });
-      }
-      for (const event of finding.supporting_events) {
-        add(event.event_id, "event", event.event_type);
-        nextEdges.push({
-          id: `f-e-${finding.id}-${event.event_id}`,
-          source: finding.id,
-          target: event.event_id,
-          label: "supports",
-        });
-      }
-    }
-    for (const link of data.links) {
-      add(link.left_event_id, "event", shortId(link.left_event_id));
-      add(link.right_event_id, "event", shortId(link.right_event_id));
-      nextEdges.push({
-        id: link.id,
-        source: link.left_event_id,
-        target: link.right_event_id,
-        label: link.rule_id,
-      });
-    }
-    return { nodes: nextNodes, edges: nextEdges };
-  }, [data, selectedTarget]);
+  const [kinds, setKinds] = useState<Set<string>>(() => new Set(KINDS));
+  const { nodes, edges } = useMemo(
+    () => graphFromSnapshot(data, selectedTarget),
+    [data, selectedTarget],
+  );
 
-  const filtered = useMemo(() => {
+  const visible = useMemo(() => {
+    const allowed = nodes.filter((node) => kinds.has(String(node.data.kind)));
+    const ids = new Set(allowed.map((node) => node.id));
     const q = query.trim().toLowerCase();
-    if (!q) {
-      return nodes;
-    }
-    const hit = new Set(
-      nodes.filter((node) => JSON.stringify(node.data).toLowerCase().includes(q) || node.id.includes(q)).map((n) => n.id),
-    );
-    return nodes.map((node) => ({
-      ...node,
-      style: { ...node.style, opacity: hit.has(node.id) ? 1 : 0.22 },
-    }));
-  }, [nodes, query]);
+    const focused = q
+      ? new Set(
+          allowed
+            .filter(
+              (node) =>
+                node.id.toLowerCase().includes(q) ||
+                String(node.data.title).toLowerCase().includes(q) ||
+                String(node.data.kind).toLowerCase().includes(q),
+            )
+            .map((node) => node.id),
+        )
+      : null;
+    return {
+      nodes: allowed.map((node) => ({
+        ...node,
+        style: { ...node.style, opacity: focused && !focused.has(node.id) ? 0.22 : 1 },
+      })),
+      edges: edges.filter((edge) => ids.has(edge.source) && ids.has(edge.target)),
+    };
+  }, [edges, kinds, nodes, query]);
 
   const selectedNode = nodes.find((node) => node.id === selected);
   return (
@@ -87,18 +55,48 @@ export function ThreatGraph() {
           placeholder="focus node…"
           aria-label="Focus nodes"
         />
+        <div className="kind-toggles" role="group" aria-label="Entity kinds">
+          {KINDS.map((kind) => (
+            <label key={kind}>
+              <input
+                type="checkbox"
+                checked={kinds.has(kind)}
+                onChange={() => {
+                  setKinds((current) => {
+                    const next = new Set(current);
+                    if (next.has(kind)) {
+                      next.delete(kind);
+                    } else {
+                      next.add(kind);
+                    }
+                    return next.size === 0 ? current : next;
+                  });
+                }}
+              />
+              {kind}
+            </label>
+          ))}
+        </div>
         {mode === "demo" ? <span className="demo-flag">DEMO MODE</span> : null}
       </div>
-      {nodes.length === 0 ? (
-        <p className="dim pad">No graphable entities.</p>
+      {visible.nodes.length === 0 ? (
+        <p className="dim pad">No graphable entities for the selected kinds.</p>
       ) : (
-        <GraphCanvas nodes={filtered} edges={edges} onSelect={setSelected} />
+        <GraphCanvas nodes={visible.nodes} edges={visible.edges} onSelect={setSelected} />
       )}
       <ul className="float-legend">
-        <li><i className="gn-target" /> Target</li>
-        <li><i className="gn-agent" /> Agent</li>
-        <li><i className="gn-finding" /> Finding</li>
-        <li><i className="gn-event" /> Event</li>
+        <li>
+          <i className="gn-target" /> Target
+        </li>
+        <li>
+          <i className="gn-agent" /> Agent
+        </li>
+        <li>
+          <i className="gn-finding" /> Finding
+        </li>
+        <li>
+          <i className="gn-event" /> Event
+        </li>
       </ul>
       {selectedNode ? (
         <aside className="float-inspect">

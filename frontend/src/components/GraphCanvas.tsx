@@ -1,4 +1,4 @@
-import { useMemo } from "react";
+import { memo, useMemo } from "react";
 import {
   Background,
   Controls,
@@ -14,7 +14,7 @@ import {
 import "@xyflow/react/dist/style.css";
 import { layoutGraph } from "../lib/graphLayout";
 
-function KindNode({ data }: NodeProps) {
+const KindNode = memo(function KindNode({ data }: NodeProps) {
   const kind = String(data.kind ?? "event");
   const title = String(data.title ?? "");
   return (
@@ -25,7 +25,7 @@ function KindNode({ data }: NodeProps) {
       <Handle type="source" position={Position.Right} />
     </div>
   );
-}
+});
 
 const nodeTypes = { kind: KindNode };
 
