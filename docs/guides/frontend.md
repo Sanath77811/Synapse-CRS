@@ -53,15 +53,21 @@ npm test
 npm run build
 ```
 
-Backend (separate process). Do not set `MIGRATION_DATABASE_URL` in the API process.
+Backend (separate process). Copy `.env.example` to `.env` (gitignored) and fill passwords/tokens as in the README. Do not commit `.env`. Do not `source .env` (the token JSON can be mangled). Do not start the API while `MIGRATION_DATABASE_URL` is in the process environment.
 
 ```bash
-# after a local .env that is never committed
-make migrate
-make api
+# Preferred: Compose (Postgres + migrate + API)
+docker compose --env-file .env -f infra/docker-compose.yml up --build
+
+# Host-side API against an already-running local Postgres (this environment
+# had Docker unavailable; PostgreSQL 16 on 127.0.0.1:5432 was used instead):
+env -u MIGRATION_DATABASE_URL -u DATABASE_URL make migrate
+env -u MIGRATION_DATABASE_URL -u DATABASE_URL make api
 ```
 
-`VITE_API_BASE_URL` defaults to `http://127.0.0.1:8000`. CORS must include the Vite origin (`http://127.0.0.1:5173`).
+`make migrate` applies Alembic to the database named by `.env`. Unset any inherited `MIGRATION_DATABASE_URL` so the file is not ignored.
+
+`VITE_API_BASE_URL` defaults to `http://127.0.0.1:8000`. CORS must include the Vite origin (`http://127.0.0.1:5173`). Error bodies from FastAPI are `{ "error": { "code", "message", "details" } }`; the console reads that envelope.
 
 ## Integrated live endpoints
 

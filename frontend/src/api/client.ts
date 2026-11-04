@@ -14,19 +14,25 @@ export class ApiError extends Error {
   }
 }
 
+function readErrorFields(record: Record<string, unknown>): { code: string; message: string } {
+  const nested = record.error;
+  const source =
+    nested && typeof nested === "object" ? (nested as Record<string, unknown>) : record;
+  const code = typeof source.code === "string" ? source.code : "http_error";
+  const message = typeof source.message === "string" ? source.message : "HTTP error";
+  return { code, message: message.slice(0, 180) };
+}
+
 function sanitizeBody(text: string): { code: string; message: string } {
   try {
     const parsed: unknown = JSON.parse(text);
     if (parsed && typeof parsed === "object") {
-      const record = parsed as Record<string, unknown>;
-      const code = typeof record.code === "string" ? record.code : "http_error";
-      const message = typeof record.message === "string" ? record.message : `HTTP error`;
-      return { code, message: message.slice(0, 180) };
+      return readErrorFields(parsed as Record<string, unknown>);
     }
   } catch {
     /* not json */
   }
-  return { code: "http_error", message: `HTTP error` };
+  return { code: "http_error", message: "HTTP error" };
 }
 
 export async function apiRequest<T>(
@@ -63,7 +69,9 @@ export async function apiRequest<T>(
       const parsed = sanitizeBody(text);
       const mapped =
         response.status === 401
-          ? "authentication_failed"
+          ? parsed.code === "authentication_required"
+            ? "authentication_required"
+            : "authentication_failed"
           : response.status === 403
             ? "authorization_failed"
             : response.status === 404

@@ -6,19 +6,40 @@ afterEach(() => {
 });
 
 describe("apiRequest", () => {
-  it("maps 401 without echoing the response body dump", async () => {
+  it("maps nested API error envelopes without echoing tokens", async () => {
     vi.stubGlobal(
       "fetch",
       vi.fn(async () => ({
         ok: false,
         status: 401,
-        text: async () => JSON.stringify({ code: "unauthenticated", message: "bad token" }),
+        text: async () =>
+          JSON.stringify({
+            error: { code: "authentication_failed", message: "The bearer token was rejected." },
+          }),
       })),
     );
     await expect(apiRequest("/api/v1/targets", { token: "secret-token-value" })).rejects.toMatchObject({
       status: 401,
       code: "authentication_failed",
-      message: "bad token",
+      message: "The bearer token was rejected.",
+    });
+  });
+
+  it("keeps authentication_required distinct from a rejected token", async () => {
+    vi.stubGlobal(
+      "fetch",
+      vi.fn(async () => ({
+        ok: false,
+        status: 401,
+        text: async () =>
+          JSON.stringify({
+            error: { code: "authentication_required", message: "A bearer token is required." },
+          }),
+      })),
+    );
+    await expect(apiRequest("/api/v1/targets")).rejects.toMatchObject({
+      status: 401,
+      code: "authentication_required",
     });
   });
 
