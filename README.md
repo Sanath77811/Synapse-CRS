@@ -43,7 +43,7 @@ packages/agent     Linux procfs collector and ingest client
 packages/correlation Deterministic evidence correlation and findings
 packages/reasoning Hybrid reconstruction, neural baseline, Z3 policy checks
 packages/validation Research evaluation harness (synthetic; optional CIC-IDS CSV adapter)
-frontend/          Minimal React status page
+frontend/          Operator investigation console (React + Vite)
 agent/             Pointer to the Linux collector package
 schemas/           JSON Schema 2020-12 contracts, version 1.0.0
 tests/             Unit tests and PostgreSQL integration tests
@@ -98,7 +98,7 @@ python3 -m venv .venv
 
 `make install`, `make test`, `make lint`, `make demo-agent`, `make demo-correlation`, `make demo-reasoning`, `make research-eval`, `make research-eval-phase11`, `make research-eval-phase12`, and `make research-eval-phase13` wrap common commands. Reasoning is documented in [docs/guides/reasoning-demo.md](docs/guides/reasoning-demo.md). Benchmark reproduction is documented in [docs/guides/reproduce-benchmarks.md](docs/guides/reproduce-benchmarks.md). pytest, the API, and Alembic read `.env` directly and then point the test suite at `synapse_test` so it does not truncate the development database. Do not `source .env`; a shell will mangle the token JSON.
 
-Status page:
+Operator console:
 
 ```bash
 cd frontend
@@ -106,7 +106,7 @@ npm ci
 npm run dev
 ```
 
-Open `http://127.0.0.1:5173`. The page reads `/health` and `/ready` only.
+Open `http://127.0.0.1:5173`. The console starts in labelled **DEMO MODE**. Connect a live bearer token at `/session`. See [docs/guides/frontend.md](docs/guides/frontend.md).
 
 More detail: [docs/development/workflow.md](docs/development/workflow.md).
 

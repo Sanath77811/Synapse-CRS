@@ -28,6 +28,8 @@ Copy `.env.example` to `.env` and fill it in before Compose or pytest. See the R
 | `make research-eval-phase12` | Run the Phase 12 endpoint track (exit 2 if DMBD JSONL is absent) |
 | `make research-eval-phase13` | Run the Phase 13 independent-evidence track (exit 2 if process JSONL is absent) |
 
+Frontend: `cd frontend && npm ci && npm run dev` (console on `127.0.0.1:5173`). `npm run build` and `npm test` are required before merging UI changes. See [guides/frontend.md](../guides/frontend.md).
+
 `make api` and `make migrate` read `.env` directly. Do not `source .env` in a shell: the token JSON can be altered by the shell parser. pytest also loads `.env` when the variables are unset.
 
 ## What to run before a change is finished
