@@ -17,9 +17,10 @@ from synapse_telemetry.demo_data import (
     LABORATORY_LABEL,
     invalid_synthetic_event,
     new_uuid4,
-    synthetic_events,
+    synthetic_raw_observations,
 )
-from synapse_telemetry.envelope import TelemetryEnvelope
+from synapse_telemetry.envelope import REDACTED_ADDRESS, TelemetryEnvelope
+from synapse_telemetry.normalization import discarded_keys, normalize_observation
 from synapse_telemetry.signatures import (
     SIGNATURE_LENGTH,
     SignatureError,
@@ -44,6 +45,14 @@ class ValidationRow:
 
 
 @dataclass(frozen=True)
+class NormalizationRow:
+    event_type: str
+    discarded: tuple[str, ...]
+    remote_address: str | None
+    address_redacted: bool
+
+
+@dataclass(frozen=True)
 class SignedRow:
     event_id: str
     event_type: str
@@ -58,6 +67,8 @@ class DemoReport:
 
     succeeded: bool = False
     laboratory_label: str = LABORATORY_LABEL
+    raw_observations: list[dict[str, object]] = field(default_factory=list)
+    normalization_rows: list[NormalizationRow] = field(default_factory=list)
     events: list[dict[str, object]] = field(default_factory=list)
     validation_rows: list[ValidationRow] = field(default_factory=list)
     invalid_event: dict[str, object] | None = None
@@ -76,6 +87,18 @@ class DemoReport:
     @property
     def events_generated(self) -> int:
         return len(self.events)
+
+    @property
+    def observations_normalized(self) -> int:
+        return len(self.normalization_rows)
+
+    @property
+    def addresses_redacted(self) -> int:
+        return sum(1 for row in self.normalization_rows if row.address_redacted)
+
+    @property
+    def extra_fields_discarded(self) -> int:
+        return sum(len(row.discarded) for row in self.normalization_rows)
 
     @property
     def events_accepted(self) -> int:
@@ -131,10 +154,42 @@ def run_demonstration() -> DemoReport:
     """Run every demonstration stage against the real contracts and signer."""
     report = DemoReport()
     try:
-        events = synthetic_events()
+        raw_observations = synthetic_raw_observations()
+        report.raw_observations = raw_observations
+        raw_snapshots = [_snapshot(item) for item in raw_observations]
+        events: list[dict[str, object]] = []
+        for raw in raw_observations:
+            event_type = str(raw["event_type"])
+            extras = discarded_keys(raw, event_type)
+            envelope = normalize_observation(raw)
+            document = envelope.model_dump(mode="json")
+            payload = document["payload"]
+            remote = payload.get("remote_address") if isinstance(payload, dict) else None
+            report.normalization_rows.append(
+                NormalizationRow(
+                    event_type=event_type,
+                    discarded=extras,
+                    remote_address=str(remote) if remote is not None else None,
+                    address_redacted=remote == REDACTED_ADDRESS,
+                )
+            )
+            events.append(document)
         report.events = events
+        if [_snapshot(item) for item in raw_observations] != raw_snapshots:
+            report.failure = "raw observations were mutated"
+            return report
         if len(events) != 3:
-            report.failure = "synthetic generation did not produce three events"
+            report.failure = "normalization did not produce three events"
+            return report
+        if report.addresses_redacted < 1:
+            report.failure = "network address was not redacted to [ip]"
+            return report
+        if report.extra_fields_discarded < 1:
+            report.failure = "unsupported fields were not discarded"
+            return report
+        dumped = json.dumps(events)
+        if "192.0.2.10" in dumped or "/usr/bin/python3" in dumped:
+            report.failure = "sensitive raw values remained after normalization"
             return report
 
         for event in events:

@@ -10,9 +10,9 @@ from pathlib import Path
 import pytest
 from pydantic import ValidationError
 from synapse_telemetry.demo import main
-from synapse_telemetry.demo_data import invalid_synthetic_event, synthetic_events
+from synapse_telemetry.demo_data import invalid_synthetic_event, synthetic_raw_observations
 from synapse_telemetry.demo_runner import DemoReport, run_demonstration
-from synapse_telemetry.envelope import EVENT_TYPES, TelemetryEnvelope
+from synapse_telemetry.envelope import EVENT_TYPES, REDACTED_ADDRESS, TelemetryEnvelope
 from synapse_telemetry.signatures import (
     SIGNATURE_LENGTH,
     SignatureError,
@@ -26,12 +26,14 @@ PACKAGE = ROOT / "packages" / "telemetry" / "src"
 
 
 def test_synthetic_events_are_valid_phase1_documents() -> None:
-    events = synthetic_events()
-    assert len(events) == 3
-    types = {event["event_type"] for event in events}
+    report = run_demonstration()
+    assert len(report.events) == 3
+    types = {event["event_type"] for event in report.events}
     assert types == set(EVENT_TYPES)
-    for event in events:
+    for event in report.events:
         TelemetryEnvelope.model_validate(event)
+    raw = synthetic_raw_observations()
+    assert len(raw) == 3
 
 
 def test_invalid_synthetic_event_is_rejected_by_the_real_validator() -> None:
@@ -104,12 +106,31 @@ def test_failed_verification_is_not_reported_as_success() -> None:
     assert report.succeeded is False
 
 
+def test_demonstration_normalizes_raw_observations() -> None:
+    report = run_demonstration()
+    assert report.observations_normalized == 3
+    assert report.addresses_redacted >= 1
+    assert report.extra_fields_discarded >= 1
+    dumped = json.dumps(report.events)
+    assert "192.0.2.10" not in dumped
+    assert "/usr/bin/python3" not in dumped
+    assert "not-a-real-secret" not in dumped
+    network = next(
+        event for event in report.events if event["event_type"] == "network_connection_observed"
+    )
+    assert network["payload"]["remote_address"] == REDACTED_ADDRESS
+    assert "argv" not in network
+    assert "password" not in network["payload"]
+
+
 def test_private_key_material_is_absent_from_terminal_output() -> None:
     buffer = io.StringIO()
     status = main([], stream=buffer)
     output = buffer.getvalue()
     assert status == 0
     assert "Demonstration result: PASS" in output
+    assert "Raw observation redaction and normalization" in output
+    assert "[ip]" in output
     assert "Modified payload integrity: REJECTED" in output
     assert "Modified identity integrity: REJECTED" in output
     assert "Original event integrity: VALID" in output

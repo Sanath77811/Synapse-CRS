@@ -496,6 +496,7 @@ def test_package_has_no_host_network_or_database_io() -> None:
         "demo_data.py",
         "demo_runner.py",
         "envelope.py",
+        "normalization.py",
         "signatures.py",
     ]
     for path in python_files:

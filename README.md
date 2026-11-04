@@ -18,7 +18,7 @@ The short project statement above is the goal. It is not a description of what t
 - Append-only audit events with a SHA-256 hash chain.
 - Bearer-token authentication and an admin/viewer role split.
 - pytest suite, ruff, Docker Compose, and GitHub Actions.
-- Telemetry observation contract 1.0.0 and an Ed25519 signing library. An offline demonstrator (`python -m synapse_telemetry.demo`) signs synthetic events and shows that tampering fails verification. It does not collect live host data. See [docs/demos/v0.2-telemetry-security-demo.md](docs/demos/v0.2-telemetry-security-demo.md).
+- Telemetry observation contract 1.0.0, allowlist redaction, and an Ed25519 signing library. An offline demonstrator (`python -m synapse_telemetry.demo`) normalizes synthetic events, signs them, and shows that tampering fails verification. It does not collect live host data. See [docs/demos/v0.2-telemetry-security-demo.md](docs/demos/v0.2-telemetry-security-demo.md) and [docs/architecture/telemetry-normalization.md](docs/architecture/telemetry-normalization.md).
 
 ## Explicit non-goals of v0.1
 

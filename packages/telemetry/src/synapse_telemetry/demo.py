@@ -11,7 +11,7 @@ from synapse_telemetry.signatures import SIGNATURE_LENGTH
 
 PROJECT = "SYNAPSE-CRS"
 SUBTITLE = "Neuro-Symbolic Cyber Reasoning System"
-VERSION = "v0.2"
+VERSION = "v0.3"
 WIDTH = 72
 
 
@@ -51,15 +51,29 @@ def render_report(report: DemoReport, stream: TextIO) -> None:
     """Write a readable terminal summary of one measured demonstration."""
     _banner(stream)
 
-    _stage(stream, 1, "Telemetry event generation")
+    _stage(stream, 1, "Raw observation redaction and normalization")
     _line(stream, f" Label: {report.laboratory_label}")
-    _line(stream, f" Events generated: {report.events_generated}")
-    for event in report.events:
+    _line(stream, f" Raw observations: {len(report.raw_observations)}")
+    _line(stream, f" Normalized envelopes: {report.observations_normalized}")
+    for raw, row, event in zip(
+        report.raw_observations,
+        report.normalization_rows,
+        report.events,
+        strict=False,
+    ):
+        extras = ",".join(row.discarded) if row.discarded else "(none)"
         _line(
             stream,
-            f"  - type={event['event_type']}  id={event['event_id']}  sequence={event['sequence']}",
+            f"  - type={row.event_type}  id={event['event_id']}  discarded={extras}",
         )
-    _line(stream, f" Result: {_status(report.events_generated == 3)}")
+        if row.address_redacted:
+            source = raw.get("remote_address")
+            _line(
+                stream,
+                f"    remote_address: {source} → {row.remote_address}",
+            )
+    stage_ok = report.observations_normalized == 3 and report.addresses_redacted >= 1
+    _line(stream, f" Result: {_status(stage_ok)}")
 
     _stage(stream, 2, "Strict schema validation")
     for row in report.validation_rows:
@@ -140,6 +154,9 @@ def render_report(report: DemoReport, stream: TextIO) -> None:
 
     _stage(stream, 7, "Final security summary")
     _line(stream, f" Synthetic events generated: {report.events_generated}")
+    _line(stream, f" Observations normalized: {report.observations_normalized}")
+    _line(stream, f" Extra fields discarded: {report.extra_fields_discarded}")
+    _line(stream, f" Addresses redacted to [ip]: {report.addresses_redacted}")
     _line(stream, f" Events accepted by schema validation: {report.events_accepted}")
     _line(stream, f" Invalid events rejected: {report.invalid_events_rejected}")
     _line(stream, f" Events successfully signed: {report.events_signed}")

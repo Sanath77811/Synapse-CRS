@@ -27,6 +27,14 @@ from synapse_telemetry.envelope import (
     TelemetryEnvelope,
     format_observed_at,
 )
+from synapse_telemetry.normalization import (
+    NormalizationError,
+    discarded_keys,
+    normalize_network_connection,
+    normalize_observation,
+    normalize_process_exited,
+    normalize_process_started,
+)
 from synapse_telemetry.signatures import (
     SIGNATURE_DOMAIN,
     SIGNATURE_LENGTH,
@@ -54,6 +62,7 @@ __all__ = [
     "TIMESTAMP_PATTERN",
     "UID_MAX",
     "UUID_V4_PATTERN",
+    "NormalizationError",
     "NetworkConnectionObservedPayload",
     "ProcessExitedPayload",
     "ProcessStartedPayload",
@@ -63,8 +72,13 @@ __all__ = [
     "SigningKey",
     "TelemetryEnvelope",
     "VerificationKey",
+    "discarded_keys",
     "format_observed_at",
     "generate_signing_key",
+    "normalize_network_connection",
+    "normalize_observation",
+    "normalize_process_exited",
+    "normalize_process_started",
     "sign_event",
     "verify_event",
 ]

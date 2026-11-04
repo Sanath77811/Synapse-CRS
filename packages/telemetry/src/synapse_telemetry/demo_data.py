@@ -105,6 +105,64 @@ def synthetic_events(
     return [started, exited, network]
 
 
+def synthetic_raw_observations(
+    identity: dict[str, str] | None = None,
+    observed_at: str | None = None,
+) -> list[dict[str, object]]:
+    """Return untrusted laboratory dictionaries, including extra and sensitive keys.
+
+    Values are synthetic. They are not collected from a host. Extra keys exist
+    so the normalizer can demonstrate allowlist extraction.
+    """
+    shared = identity or laboratory_identity()
+    stamp = observed_at or laboratory_clock()
+    started: dict[str, object] = {
+        "event_type": "process_started",
+        "target_id": shared["target_id"],
+        "agent_id": shared["agent_id"],
+        "boot_id": shared["boot_id"],
+        "sequence": 1,
+        "observed_at": stamp,
+        "pid": 4242,
+        "ppid": 1,
+        "uid": 1000,
+        "start_ticks": 123456,
+        "comm": "python3",
+        "argv": ["python3", "--version"],
+        "environ": {"PATH": "/usr/bin"},
+        "exe": "/usr/bin/python3",
+    }
+    exited: dict[str, object] = {
+        "event_type": "process_exited",
+        "target_id": shared["target_id"],
+        "agent_id": shared["agent_id"],
+        "boot_id": shared["boot_id"],
+        "sequence": 2,
+        "observed_at": stamp,
+        "pid": 4242,
+        "start_ticks": 123456,
+        "exit_code": 0,
+        "command": "python3",
+    }
+    network: dict[str, object] = {
+        "event_type": "network_connection_observed",
+        "target_id": shared["target_id"],
+        "agent_id": shared["agent_id"],
+        "boot_id": shared["boot_id"],
+        "sequence": 3,
+        "observed_at": stamp,
+        "protocol": "tcp",
+        "local_port": 40000,
+        "remote_port": 443,
+        "remote_address": "192.0.2.10",
+        "uid": 1000,
+        "pid": 4242,
+        "cmdline": "curl https://192.0.2.10",
+        "password": "not-a-real-secret",
+    }
+    return [started, exited, network]
+
+
 def invalid_synthetic_event(identity: dict[str, str] | None = None) -> dict[str, object]:
     """Return a document that looks like telemetry but includes a command field."""
     events = synthetic_events(identity=identity)
