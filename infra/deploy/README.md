@@ -79,7 +79,7 @@ Do **not** add `SYNAPSE_AUTH_TOKENS`, `DATABASE_URL`, or passwords to Vercel.
 3. In Render: New Web Service, repo `Synapse-CRS`, branch `cursor/v0.2-telemetry-2464`, Docker, Dockerfile `infra/docker/api.Dockerfile`, health check `/health`. Instance: start with free/starter only if you approved it; sklearn + Z3 may need more RAM.
 4. Set Render secrets listed above. For CORS, you can temporarily use the production Vercel URL you will choose (for example `https://<project>.vercel.app`).
 5. Open Render Shell **once**, export `MIGRATION_DATABASE_URL` only in that session, run Alembic, then close the shell. Confirm `GET /health` and `GET /ready` on the public API URL.
-6. In Vercel: Import repo, Root Directory `frontend`, Node 22, env `VITE_API_BASE_URL` = the Render origin. Deploy Production.
+6. In Vercel: Import repo, **Production Branch** `cursor/v0.2-telemetry-2464` (never `main` — `main` is README-only and 404s). **Root Directory** `frontend`. Output Directory **`dist`** (not `frontend/dist`). Node 22. Env `VITE_API_BASE_URL` = the Render origin. Deploy Production. If Root Directory is left empty, repo-root `vercel.json` still builds `frontend/dist` on this branch.
 7. Copy the exact Production origin from Vercel (scheme + host, no path). Set `SYNAPSE_CORS_ORIGINS` on Render to that value. Redeploy or restart the API.
 8. Open the Vercel URL, use **Connect live** with an admin token you generated locally. Confirm HUD is not DEMO MODE. Do **not** ingest `synthetic_lab` envelopes into this database.
 
