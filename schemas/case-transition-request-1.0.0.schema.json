@@ -1,0 +1,27 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://synapse-crs.local/schemas/case-transition-request-1.0.0.schema.json",
+  "title": "CaseTransitionRequest",
+  "type": "object",
+  "additionalProperties": false,
+  "x-synapse-contract-version": "1.0.0",
+  "required": ["to_state", "reason"],
+  "properties": {
+    "to_state": {
+      "type": "string",
+      "enum": [
+        "AUTHORIZED_TARGET",
+        "OBSERVATION",
+        "EVIDENCE",
+        "HYPOTHESIS",
+        "VERIFICATION",
+        "APPROVAL",
+        "ACTION",
+        "VALIDATION",
+        "ROLLBACK",
+        "SEALED_AUDIT"
+      ]
+    },
+    "reason": {"type": "string", "minLength": 1, "maxLength": 1000}
+  }
+}

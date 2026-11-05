@@ -1,0 +1,7 @@
+Destination Port,Flow Duration,Total Fwd Packets,Total Backward Packets,Label
+80,1000,10,8,BENIGN
+443,2000,4,2,BENIGN
+22,50,1,0,PortScan
+80,90000,400,20,DoS Hulk
+,10,1,1,
+443,100,2,2,BENIGN

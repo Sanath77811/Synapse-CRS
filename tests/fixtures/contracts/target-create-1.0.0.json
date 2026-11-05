@@ -1,0 +1,11 @@
+{
+  "name": "lab-app-1",
+  "owner": "research-team",
+  "scope": {
+    "environment": "lab",
+    "assets": ["lab-app-1.internal"],
+    "description": "Owned laboratory application fixture."
+  },
+  "authorization_expiry": "2026-12-31T00:00:00Z",
+  "allowed_capabilities": ["telemetry.ingest"]
+}

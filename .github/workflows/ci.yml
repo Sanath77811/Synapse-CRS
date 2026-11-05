@@ -1,0 +1,59 @@
+name: ci
+
+on:
+  push:
+  pull_request:
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    services:
+      postgres:
+        image: postgres:16-alpine
+        env:
+          POSTGRES_USER: synapse
+          POSTGRES_PASSWORD: ci-only-password
+          POSTGRES_DB: synapse
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd "pg_isready -U synapse -d synapse"
+          --health-interval 5s
+          --health-timeout 5s
+          --health-retries 20
+    env:
+      POSTGRES_USER: synapse
+      POSTGRES_PASSWORD: ci-only-password
+      POSTGRES_DB: synapse
+      SYNAPSE_APP_PASSWORD: ci-only-app-password
+      MIGRATION_DATABASE_URL: postgresql+psycopg://synapse:ci-only-password@localhost:5432/synapse
+      DATABASE_URL: postgresql+psycopg://synapse_app:ci-only-app-password@localhost:5432/synapse
+      SYNAPSE_ENVIRONMENT: test
+      SYNAPSE_CORS_ORIGINS: http://localhost:5173,http://127.0.0.1:5173
+      SYNAPSE_AUTH_TOKENS: '{"ci-placeholder-token-0123456789abcd":{"actor":"ci-admin","role":"admin"}}'
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - name: Install dependencies
+        run: pip install -r requirements.lock
+      - name: Lint
+        run: |
+          ruff check .
+          ruff format --check .
+      - name: Test
+        run: pytest
+
+  frontend:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+      - name: Install and build the dashboard
+        working-directory: frontend
+        run: |
+          npm ci
+          npm run build

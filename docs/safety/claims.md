@@ -1,0 +1,55 @@
+# Claims and limitations
+
+## What v0.1 does
+
+These statements match tests in this repository:
+
+- The API starts only with a database URL and a non-empty token configuration.
+- Unauthenticated registry calls are rejected.
+- A viewer cannot create or revoke a target, open a case, or transition a case.
+- The API refuses to start when `MIGRATION_DATABASE_URL` is set. Compose gives that URL only to a one-shot migration process.
+- A target can be stored with an owner, scope, expiry, capability allowlist, and timestamps.
+- A target whose expiry is not in the future, or whose authorization is revoked, is not eligible. The API will not open or advance a case for it.
+- Scope values outside `lab` and `development`, empty asset lists, unbounded asset names, and capabilities outside the allowlist are rejected.
+- Case state moves only along the documented linear path. A skipped or backward move is rejected.
+- A transition into `ACTION`, and every other transition, records `executed: false` and does not start a program.
+- Audit events form a hash chain from a genesis hash. `/api/v1/audit/verify` replays that chain and rejects a stored head that does not match the replay.
+- The application role cannot update, delete, or truncate audit events. A table-owner `UPDATE`, `DELETE`, or `TRUNCATE` hits an append-only trigger.
+- The application role cannot change a revoked target back to `active` or move a case except along the next legal transition. Case create and transition lock the target row before the eligibility check.
+
+## What v0.1 does not do
+
+Do not describe the current system as any of the following. They are research goals for later versions, and only after implementation, tests, and published limits:
+
+- Discovery of unknown vulnerabilities or zero-days
+- Automatic or assisted exploitation
+- Automatic binary patching or hotpatching
+- Zero-downtime remediation
+- A mathematical guarantee that a host, program, or configuration is secure
+- Runtime enforcement with eBPF
+- Model-based security reasoning
+- Formal verification with Z3 or any other solver
+
+The case state name `VERIFICATION` is a label in a state machine. Reaching it does not verify a property.
+
+## Audit limitation
+
+The hash chain and the append-only trigger are tamper-evidence and tamper-resistance for the application role. They are not absolute tamper-proof logging. A database owner can disable triggers. Verification fails when a stored event does not match its hash or when `audit_chain_state.head_hash` does not match the replayed chain. A well-formed insert by a role that can write `audit_events` still verifies.
+
+## Authorization limitation
+
+The registry does not prove that a target is owned or that a test is authorized. It records an operator's assertion and then refuses to proceed when that record is missing, revoked, or expired.
+
+## Execution limitation
+
+v0.1 has no command API, no shell integration, and no client that connects to a target. Capability names such as `telemetry.ingest` reserve vocabulary for later versions. They do not enable collection.
+
+## Research evaluation limitation
+
+Phase 10 measures hybrid components on constructed synthetic reconstructions. Those metrics are not enterprise detection rates and are not CIC-IDS2017 results unless an operator-supplied CSV is parsed as an external benchmark. Benchmark rows are not enrolled Linux telemetry.
+
+Phase 11 evaluates a flow-only protocol when CIC-IDS2017 is supplied. If the corpus is missing, the Phase 11 command fails closed and does not invent CIC-IDS2017 scores. The Phase 9 hybrid is not comparable on flow records.
+
+Phase 12 discovers independent endpoint datasets and can reconstruct DMBD-like process rows when JSONL is supplied. If DMBD/WinMET/OpTC files are missing, the Phase 12 command fails closed. Sample-level labels are not event-level ground truth. Windows process hashes are not rewritten into Linux boot identities.
+
+Phase 13 adds bounded acquisition and completeness-aware sample reasoning. Inspecting DMBD sample-label JSON is not process-tree evaluation. Independent scientific completion requires operator-supplied process evidence; the default command fails closed without it.

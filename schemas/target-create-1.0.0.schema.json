@@ -1,0 +1,30 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://synapse-crs.local/schemas/target-create-1.0.0.schema.json",
+  "title": "TargetCreate",
+  "type": "object",
+  "additionalProperties": false,
+  "x-synapse-contract-version": "1.0.0",
+  "required": ["name", "owner", "scope", "authorization_expiry", "allowed_capabilities"],
+  "properties": {
+    "name": {"type": "string", "minLength": 1, "maxLength": 200},
+    "owner": {"type": "string", "minLength": 1, "maxLength": 200},
+    "scope": {"$ref": "target-scope-1.0.0.schema.json"},
+    "authorization_expiry": {"type": "string", "format": "date-time"},
+    "allowed_capabilities": {
+      "type": "array",
+      "minItems": 1,
+      "maxItems": 8,
+      "uniqueItems": true,
+      "items": {
+        "type": "string",
+        "enum": [
+          "telemetry.ingest",
+          "evidence.submit",
+          "reasoning.request",
+          "verification.request"
+        ]
+      }
+    }
+  }
+}

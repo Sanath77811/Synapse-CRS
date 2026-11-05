@@ -1,0 +1,920 @@
+{
+  "experiment_id": "phase13-independent-evidence-v1",
+  "phase13_version": "0.10.0",
+  "feature_schema": "sample_features_v13.1.0",
+  "dmbd_process_trees_evaluated": false,
+  "dmbd_labels_inspected": true,
+  "winmet_evaluated": false,
+  "optc_evaluated": false,
+  "independent_endpoint_validation_completed": false,
+  "scientific_completion": false,
+  "blocker": null,
+  "discovery": {
+    "phase12_candidate_ids": [
+      "dmbd",
+      "winmet",
+      "optc"
+    ],
+    "verified_dmbd_http": {
+      "label_train_url": "https://gdo168.llnl.gov/data/dmbd/truth_labels_train.json",
+      "label_test_url": "https://gdo168.llnl.gov/data/dmbd/truth_labels_test.json",
+      "label_train_content_length": 1979873,
+      "label_test_content_length": 1233522,
+      "trees_0_url": "https://gdo168.llnl.gov/data/dmbd/trees_0.json",
+      "trees_0_content_length": 969100712,
+      "trees_not_downloaded": true,
+      "index": "https://gdo168.llnl.gov/data/dmbd/",
+      "docs": "https://gdo-wintap.llnl.gov/data/newdocs/DMBD/"
+    },
+    "alternatives_considered": [
+      {
+        "id": "ember2018",
+        "name": "EMBER 2018",
+        "official_source": "https://github.com/elastic/ember",
+        "verified_download": false,
+        "reason_skipped": "Static PE feature vectors, not process-creation/termination trees. Unsuitable for reconstruction RQs.",
+        "rank": 99
+      },
+      {
+        "id": "cic-malmem-2022",
+        "name": "CIC-MalMem-2022",
+        "official_source": "https://www.unb.ca/cic/datasets/malmem-2022.html",
+        "verified_download": false,
+        "reason_skipped": "Memory-dump classification features, not host process graphs.",
+        "rank": 98
+      },
+      {
+        "id": "avast-ctu-cape",
+        "name": "Avast-CTU Public CAPEv2 Dataset",
+        "official_source": "https://github.com/avast/avast-ctu-cape-dataset",
+        "verified_download": false,
+        "reason_skipped": "Sandbox reports; size and license not verified in this session; not auto-downloaded.",
+        "rank": 20
+      }
+    ],
+    "ranking": [
+      {
+        "rank": 1,
+        "id": "dmbd",
+        "suitability": "Best documented process identity (pid_hash) plus sample labels. Process trees were not acquired (\u22481 GB/shard).",
+        "evidence_class": "labels_inspected_trees_absent"
+      },
+      {
+        "rank": 2,
+        "id": "winmet",
+        "suitability": "Documented process trees; ~13 GB compressed / ~750 GB unpacked.",
+        "evidence_class": "not_acquired_size"
+      },
+      {
+        "rank": 3,
+        "id": "optc",
+        "suitability": "Enterprise eCar; ~1 TB; contested labels; not acquired.",
+        "evidence_class": "not_acquired_size"
+      },
+      {
+        "rank": 4,
+        "id": "avast-ctu-cape",
+        "suitability": "Possible sandbox trees; unverified locally.",
+        "evidence_class": "not_acquired"
+      }
+    ],
+    "epistemic": {
+      "verified_facts": [
+        "truth_labels_train.json Content-Length 1979873",
+        "truth_labels_test.json Content-Length 1233522",
+        "trees_0.json Content-Length 969100712 via Range"
+      ],
+      "documented_claims": [
+        "DMBD overview 40,000 train / 25,416 test",
+        "WinMET ~13 GB / ~750 GB",
+        "OpTC about 1 TB"
+      ],
+      "inferences": [
+        "trees_*.json pandas shards are too large for the 8 MiB acquisition bound"
+      ],
+      "unknown": [
+        "WinMET exact file list this session (Zenodo API timed out previously)",
+        "OpTC GDrive live file sizes",
+        "LLNL license acceptance status for a given operator"
+      ]
+    }
+  },
+  "verified_dmbd_http": {
+    "label_train_url": "https://gdo168.llnl.gov/data/dmbd/truth_labels_train.json",
+    "label_test_url": "https://gdo168.llnl.gov/data/dmbd/truth_labels_test.json",
+    "label_train_content_length": 1979873,
+    "label_test_content_length": 1233522,
+    "trees_0_url": "https://gdo168.llnl.gov/data/dmbd/trees_0.json",
+    "trees_0_content_length": 969100712,
+    "trees_not_downloaded": true,
+    "index": "https://gdo168.llnl.gov/data/dmbd/",
+    "docs": "https://gdo-wintap.llnl.gov/data/newdocs/DMBD/"
+  },
+  "dmbd_labels": {
+    "available": true,
+    "directory": "synapse-dmbd",
+    "train": {
+      "path": "truth_labels_train.json",
+      "sha256": "76b4f54d187f1eada9266ae578022189dad1ac27d5acdebc34d680609a9a36c2",
+      "file_size_bytes": 1979873,
+      "format": "pandas_orient_columns_experiment_year_label",
+      "sample_count": 40000,
+      "unique_sample_ids": 40000,
+      "label_counts": {
+        "benign": 20000,
+        "malicious": 20000
+      },
+      "year_counts": {
+        "2023": 7343,
+        "2021": 4005,
+        "2017": 15033,
+        "2024": 7004,
+        "2022": 3254,
+        "2020": 2634,
+        "2019": 262,
+        "2018": 178,
+        "2009": 3,
+        "2016": 117,
+        "2014": 43,
+        "2013": 14,
+        "2015": 94,
+        "2012": 4,
+        "2010": 5,
+        "2007": 1,
+        "2011": 4,
+        "2008": 2
+      },
+      "label_scope": "sample",
+      "label_source": "DMBD AV-consensus files as published on gdo168.llnl.gov",
+      "id_prefix_sample": [
+        "E53002",
+        "E30273",
+        "E27878"
+      ],
+      "notes": "These files label experiments/samples, not individual process events. They are not a substitute for trees_*.json process records."
+    },
+    "test": {
+      "path": "truth_labels_test.json",
+      "sha256": "c1152137b62100b3d7abada3b1a77dc3d800b809708eca2a3ad0712f9136f8ff",
+      "file_size_bytes": 1233522,
+      "format": "pandas_orient_columns_experiment_year_label",
+      "sample_count": 24747,
+      "unique_sample_ids": 24747,
+      "label_counts": {
+        "benign": 5249,
+        "malicious": 19498
+      },
+      "year_counts": {
+        "2024": 7615,
+        "2017": 17131,
+        "null": 1
+      },
+      "label_scope": "sample",
+      "label_source": "DMBD AV-consensus files as published on gdo168.llnl.gov",
+      "id_prefix_sample": [
+        "E33423",
+        "E39699",
+        "E16707"
+      ],
+      "notes": "These files label experiments/samples, not individual process events. They are not a substitute for trees_*.json process records."
+    },
+    "split_comparison": {
+      "train_samples": 40000,
+      "test_samples": 24747,
+      "documented_train": 40000,
+      "documented_test": 25416,
+      "train_matches_documented_count": true,
+      "test_matches_documented_count": false,
+      "train_test_id_overlap": 0,
+      "notes": "Overview claimed 25,416 test samples. Verified unique IDs come from the inspected files. Train/test overlap must be zero for a valid split."
+    },
+    "not_process_trees": true,
+    "independent_process_evaluation": false,
+    "notes": "Official DMBD sample labels were inspected. trees_*.json were not loaded. This is not independent endpoint reconstruction or detection."
+  },
+  "feature_definitions": [
+    {
+      "name": "event_count",
+      "derivation": "count of normalized records for the sample",
+      "required": "source_sample_id",
+      "missing": "0"
+    },
+    {
+      "name": "process_count",
+      "derivation": "count of reconstructed process identities",
+      "required": "source_process_id",
+      "missing": "0"
+    },
+    {
+      "name": "orphan_count",
+      "derivation": "parent identity present but not in the sample graph",
+      "required": "source_parent_process_id",
+      "missing": "0"
+    },
+    {
+      "name": "incomplete_lifecycle_count",
+      "derivation": "identities without observed process_term",
+      "required": "process_end_timestamp",
+      "missing": "0"
+    },
+    {
+      "name": "parent_edge_count",
+      "derivation": "nodes whose parent identity is present in the graph",
+      "required": "source_parent_process_id",
+      "missing": "0"
+    },
+    {
+      "name": "network_ref_count",
+      "derivation": "records with observed network_connection_reference",
+      "required": "network_connection_reference",
+      "missing": "0"
+    },
+    {
+      "name": "completeness_ratio",
+      "derivation": "complete identities / process_count",
+      "required": "process start and term",
+      "missing": "0"
+    },
+    {
+      "name": "pid_reuse_flag",
+      "derivation": "1 if two identities share sample and os_pid",
+      "required": "os_pid plus stable identity",
+      "missing": "0"
+    }
+  ],
+  "phase10_preserved": {
+    "available": true,
+    "name": "phase10",
+    "experiment_id": "phase10-research-validation-v1",
+    "must_not_rewrite": true
+  },
+  "phase11_preserved": {
+    "available": true,
+    "name": "phase11",
+    "experiment_id": "phase11-flow-benchmark-v1",
+    "must_not_rewrite": true
+  },
+  "phase12_preserved": {
+    "available": true,
+    "name": "phase12",
+    "experiment_id": "phase12-endpoint-evidence-v1",
+    "must_not_rewrite": true
+  },
+  "software": {
+    "python": "3.12.3",
+    "platform": "Linux-6.12.94+-x86_64-with-glibc2.39",
+    "sklearn": "1.9.1",
+    "phase13_version": "0.10.0",
+    "phase10_feature_schema": "1.0.0",
+    "sample_feature_schema": "sample_features_v13.1.0"
+  },
+  "acquisition_bound_bytes": 8388608,
+  "evaluated": true,
+  "mode": "synthetic_endpoint_protocol",
+  "dataset_class": "synthetic_endpoint_protocol",
+  "manifest": {
+    "name": "synthetic_endpoint_protocol",
+    "version": "phase12-adapter-0.9.0",
+    "path": "/workspace/tests/fixtures/validation/synthetic_endpoint_protocol.jsonl",
+    "sha256": "832fccdc2cc4f07f7592d99c838ebd8847375665fb97ad7160da2e9e5e324501",
+    "file_size_bytes": 4837,
+    "row_count": 17,
+    "excluded_count": 2,
+    "excluded_reasons": {
+      "malformed_json": 1,
+      "unsupported_label_scope": 1
+    },
+    "sample_count": 12,
+    "label_counts": {
+      "benign": 9,
+      "malicious": 7,
+      "neverseenfam": 1
+    },
+    "label_scope": "sample",
+    "split_counts": {
+      "train": 12,
+      "validation": 2,
+      "test": 3
+    },
+    "event_types": {
+      "process": 17
+    },
+    "dataset_class": "synthetic_endpoint_protocol",
+    "available": true,
+    "notes": "Normalized endpoint JSONL. Not enrolled-agent telemetry. Not Linux start_ticks. SYNTHETIC PROTOCOL FIXTURE. Not DMBD/WinMET/OpTC.",
+    "normalization_version": "endpoint-evidence-1.0.0"
+  },
+  "inspection": {
+    "path": "synthetic_endpoint_protocol.jsonl",
+    "file_size_bytes": 4837,
+    "rows_inspected": 18,
+    "columns": {
+      "source_record_id": 18,
+      "sample_id": 18,
+      "split": 18,
+      "label": 18,
+      "label_scope": 17,
+      "event_type": 18,
+      "pid_hash": 17,
+      "parent_pid_hash": 15,
+      "os_pid": 16,
+      "parent_os_pid": 15,
+      "process_started": 16,
+      "process_term": 10,
+      "hostname": 15
+    },
+    "label_counts": {
+      "benign": 10,
+      "malicious": 7,
+      "neverseenfam": 1
+    },
+    "event_types": {
+      "process": 18
+    },
+    "sample_count": 13,
+    "duplicate_source_record_ids": 0,
+    "malformed_lines": 1,
+    "process_id_fields_present": [
+      "pid_hash",
+      "os_pid",
+      "parent_pid_hash"
+    ]
+  },
+  "excluded": [
+    {
+      "source_record_id": "synthetic_endpoint_protocol.jsonl:17",
+      "reason": "malformed_json"
+    },
+    {
+      "source_record_id": "r17",
+      "reason": "unsupported_label_scope"
+    }
+  ],
+  "split": {
+    "strategy": "official_sample_split",
+    "seed": 42,
+    "train_samples": [
+      "s01",
+      "s02",
+      "s03",
+      "s04",
+      "s05",
+      "s10",
+      "s11",
+      "s12"
+    ],
+    "validation_samples": [
+      "s06",
+      "s07"
+    ],
+    "test_samples": [
+      "s08",
+      "s09"
+    ],
+    "train_labels": {
+      "benign": 5,
+      "malicious": 2,
+      "neverseenfam": 1
+    },
+    "validation_labels": {
+      "benign": 1,
+      "malicious": 1
+    },
+    "test_labels": {
+      "benign": 1,
+      "malicious": 1
+    },
+    "notes": "Preserved source split field at sample granularity."
+  },
+  "reconstruction": {
+    "process_count": 15,
+    "complete_lifecycle_count": 9,
+    "orphan_count": 3,
+    "pid_reuse_count": 1,
+    "missing_parent_count": 3,
+    "ordering_violations": 0,
+    "coverage": 0.8824,
+    "ambiguity_rate": 0.0667,
+    "relationship_counts": {
+      "confirmed": 4,
+      "probable": 0,
+      "unsupported": 3,
+      "contradictory": 0,
+      "none": 8
+    },
+    "notes": "Structural reconstruction only. Completeness is observed start+term, not an inferred exit at the observation-window boundary. No independent process-tree accuracy is claimed without ground-truth edges. Relationship labels are structural, not calibrated probabilities. Missing termination is not proof the process never exited."
+  },
+  "detection": {
+    "method_family": "completeness_aware_union_v1",
+    "not_phase9_hybrid": true,
+    "thresholds_fit_on": "train samples only",
+    "thresholds": {
+      "volume": 2.0,
+      "completeness_min": 0.4
+    },
+    "majority": {
+      "true_positive": 0,
+      "false_positive": 0,
+      "true_negative": 1,
+      "false_negative": 1,
+      "precision": 0.0,
+      "recall": 0.0,
+      "f1": 0.0,
+      "false_positive_rate": 0.0,
+      "accuracy": 0.5,
+      "evaluation_unit": "sample",
+      "method": "majority"
+    },
+    "volume_rule": {
+      "true_positive": 0,
+      "false_positive": 0,
+      "true_negative": 1,
+      "false_negative": 1,
+      "precision": 0.0,
+      "recall": 0.0,
+      "f1": 0.0,
+      "false_positive_rate": 0.0,
+      "accuracy": 0.5,
+      "evaluation_unit": "sample",
+      "method": "volume_rule"
+    },
+    "symbolic": {
+      "true_positive": 1,
+      "false_positive": 0,
+      "true_negative": 1,
+      "false_negative": 0,
+      "precision": 1.0,
+      "recall": 1.0,
+      "f1": 1.0,
+      "false_positive_rate": 0.0,
+      "accuracy": 1.0,
+      "evaluation_unit": "sample",
+      "method": "symbolic"
+    },
+    "union": {
+      "true_positive": 1,
+      "false_positive": 0,
+      "true_negative": 1,
+      "false_negative": 0,
+      "precision": 1.0,
+      "recall": 1.0,
+      "f1": 1.0,
+      "false_positive_rate": 0.0,
+      "accuracy": 1.0,
+      "evaluation_unit": "sample",
+      "method": "union"
+    },
+    "ml_isolation_forest": {
+      "true_positive": 1,
+      "false_positive": 0,
+      "true_negative": 1,
+      "false_negative": 0,
+      "precision": 1.0,
+      "recall": 1.0,
+      "f1": 1.0,
+      "false_positive_rate": 0.0,
+      "accuracy": 1.0,
+      "evaluation_unit": "sample",
+      "method": "ml_isolation_forest"
+    },
+    "completeness_aware": {
+      "true_positive": 1,
+      "false_positive": 0,
+      "true_negative": 1,
+      "false_negative": 0,
+      "precision": 1.0,
+      "recall": 1.0,
+      "f1": 1.0,
+      "false_positive_rate": 0.0,
+      "accuracy": 1.0,
+      "evaluation_unit": "sample",
+      "method": "completeness_aware_union_v1"
+    },
+    "completeness_aware_or_if": {
+      "true_positive": 1,
+      "false_positive": 0,
+      "true_negative": 1,
+      "false_negative": 0,
+      "precision": 1.0,
+      "recall": 1.0,
+      "f1": 1.0,
+      "false_positive_rate": 0.0,
+      "accuracy": 1.0,
+      "evaluation_unit": "sample",
+      "method": "completeness_aware_or_if_v1"
+    },
+    "forest_fitted": true,
+    "abstain_count": 0,
+    "test_n": 2,
+    "phase9_hybrid": {
+      "status": "not_comparable",
+      "reason": "Linux identity model is not used for DMBD/Wintap rows."
+    },
+    "hypothesis": "Abstaining when completeness is low reduces confident errors versus union, at the cost of recall. Isolation Forest is a separate ML-only baseline.",
+    "ablation_completeness_min_zero": {
+      "true_positive": 1,
+      "false_positive": 0,
+      "true_negative": 1,
+      "false_negative": 0,
+      "precision": 1.0,
+      "recall": 1.0,
+      "f1": 1.0,
+      "false_positive_rate": 0.0,
+      "accuracy": 1.0,
+      "evaluation_unit": "sample",
+      "method": "union_as_completeness_disabled"
+    }
+  },
+  "explanations": {
+    "valid_source_references": true,
+    "unsupported_claim_count": 0,
+    "stability_kept_citations": 5,
+    "stability_compared": 5,
+    "insufficient_empty_pass": true,
+    "sample": [
+      {
+        "source_dataset": "synthetic_endpoint_protocol",
+        "source_sample_id": "s01",
+        "source_record_ids": [
+          "r01",
+          "r02"
+        ],
+        "process_identity": "h-s01-a",
+        "parent_identity": "h-s01-a",
+        "prediction": "sample_typical",
+        "observed": [
+          "process_identities=2"
+        ],
+        "inferred": [
+          "Sample assessment is not an event-level compromise verdict.",
+          "Windows pid_hash was not mapped to Linux start_ticks."
+        ],
+        "missing": [],
+        "unsupported_claims": [],
+        "epistemic": "derived_from_sample_features"
+      },
+      {
+        "source_dataset": "synthetic_endpoint_protocol",
+        "source_sample_id": "s02",
+        "source_record_ids": [
+          "r03"
+        ],
+        "process_identity": "h-s02-a",
+        "parent_identity": null,
+        "prediction": "sample_typical",
+        "observed": [
+          "process_identities=1"
+        ],
+        "inferred": [
+          "Sample assessment is not an event-level compromise verdict.",
+          "Windows pid_hash was not mapped to Linux start_ticks."
+        ],
+        "missing": [
+          "parent process"
+        ],
+        "unsupported_claims": [],
+        "epistemic": "derived_from_sample_features"
+      },
+      {
+        "source_dataset": "synthetic_endpoint_protocol",
+        "source_sample_id": "s03",
+        "source_record_ids": [
+          "r04",
+          "r15"
+        ],
+        "process_identity": "h-s03-a",
+        "parent_identity": "missing-parent",
+        "prediction": "sample_suspicious",
+        "observed": [
+          "process_identities=1"
+        ],
+        "inferred": [
+          "Sample assessment is not an event-level compromise verdict.",
+          "Windows pid_hash was not mapped to Linux start_ticks."
+        ],
+        "missing": [],
+        "unsupported_claims": [],
+        "epistemic": "derived_from_sample_features"
+      },
+      {
+        "source_dataset": "synthetic_endpoint_protocol",
+        "source_sample_id": "s04",
+        "source_record_ids": [
+          "r05",
+          "r06"
+        ],
+        "process_identity": "h-s04-a",
+        "parent_identity": "h-s04-a",
+        "prediction": "sample_suspicious",
+        "observed": [
+          "process_identities=2"
+        ],
+        "inferred": [
+          "Sample assessment is not an event-level compromise verdict.",
+          "Windows pid_hash was not mapped to Linux start_ticks."
+        ],
+        "missing": [
+          "process termination"
+        ],
+        "unsupported_claims": [],
+        "epistemic": "derived_from_sample_features"
+      }
+    ],
+    "notes": "Stability drops the last record of a sample and checks citations remain inside the remaining set. Not a causal ablation."
+  },
+  "policy_z3": {
+    "empty_malicious_claim": {
+      "result": "unsat",
+      "policy": "claim_malicious implies has_source_records; insufficient_evidence implies not claim",
+      "inputs": {
+        "insufficient_evidence": true,
+        "claim_malicious": true,
+        "has_source_records": false
+      },
+      "notes": "SAT means the encoded facts obey the policy model. It is not host safety."
+    },
+    "grounded_benign": {
+      "result": "sat",
+      "policy": "claim_malicious implies has_source_records; insufficient_evidence implies not claim",
+      "inputs": {
+        "insufficient_evidence": false,
+        "claim_malicious": false,
+        "has_source_records": true
+      },
+      "notes": "SAT means the encoded facts obey the policy model. It is not host safety."
+    }
+  },
+  "robustness": {
+    "kind": "synthetic_perturbation",
+    "not_independent_dataset": true,
+    "phase12": {
+      "baseline": {
+        "process_count": 15,
+        "orphans": 3,
+        "pid_reuse": 1,
+        "complete": 9
+      },
+      "missing_creation_events": {
+        "process_count": 15,
+        "complete_lifecycle_count": 9,
+        "orphan_count": 3,
+        "pid_reuse_count": 1,
+        "missing_parent_count": 3,
+        "ordering_violations": 0,
+        "unresolved_parent_references": 3,
+        "coverage": 0.8824,
+        "ambiguity_rate": 0.0667,
+        "nodes": [
+          {
+            "identity": "h-s01-a",
+            "sample_id": "s01",
+            "os_pid": 100,
+            "parent_identity": null,
+            "started": "2023-01-01T00:00:00Z",
+            "ended": "2023-01-01T00:01:00Z",
+            "source_record_ids": [
+              "r01"
+            ],
+            "complete": true,
+            "orphan": false,
+            "identity_provenance": "observed"
+          },
+          {
+            "identity": "h-s01-b",
+            "sample_id": "s01",
+            "os_pid": 101,
+            "parent_identity": "h-s01-a",
+            "started": "2023-01-01T00:00:01Z",
+            "ended": "2023-01-01T00:01:00Z",
+            "source_record_ids": [
+              "r02"
+            ],
+            "complete": true,
+            "orphan": false,
+            "identity_provenance": "observed"
+          },
+          {
+            "identity": "h-s02-a",
+            "sample_id": "s02",
+            "os_pid": 200,
+            "parent_identity": null,
+            "started": "2023-01-01T00:10:00Z",
+            "ended": "2023-01-01T00:11:00Z",
+            "source_record_ids": [
+              "r03"
+            ],
+            "complete": true,
+            "orphan": false,
+            "identity_provenance": "observed"
+          },
+          {
+            "identity": "h-s03-a",
+            "sample_id": "s03",
+            "os_pid": 300,
+            "parent_identity": "missing-parent",
+            "started": "2023-01-01T00:20:00Z",
+            "ended": "2023-01-01T00:21:00Z",
+            "source_record_ids": [
+              "r04",
+              "r15"
+            ],
+            "complete": true,
+            "orphan": true,
+            "identity_provenance": "observed"
+          },
+          {
+            "identity": "h-s04-a",
+            "sample_id": "s04",
+            "os_pid": 400,
+            "parent_identity": null,
+            "started": "2023-01-01T00:30:00Z",
+            "ended": null,
+            "source_record_ids": [
+              "r05"
+            ],
+            "complete": false,
+            "orphan": false,
+            "identity_provenance": "observed"
+          },
+          {
+            "identity": "h-s04-b",
+            "sample_id": "s04",
+            "os_pid": 401,
+            "parent_identity": "h-s04-a",
+            "started": "2023-01-01T00:30:01Z",
+            "ended": null,
+            "source_record_ids": [
+              "r06"
+            ],
+            "complete": false,
+            "orphan": false,
+            "identity_provenance": "observed"
+          },
+          {
+            "identity": "h-s05-a",
+            "sample_id": "s05",
+            "os_pid": 500,
+            "parent_identity": null,
+            "started": "2023-01-01T00:40:00Z",
+            "ended": "2023-01-01T00:41:00Z",
+            "source_record_ids": [
+              "r07"
+            ],
+            "complete": true,
+            "orphan": false,
+            "identity_provenance": "observed"
+          },
+          {
+            "identity": "h-s06-a",
+            "sample_id": "s06",
+            "os_pid": 600,
+            "parent_identity": null,
+            "started": "2023-01-01T00:50:00Z",
+            "ended": "2023-01-01T00:51:00Z",
+            "source_record_ids": [
+              "r08"
+            ],
+            "complete": true,
+            "orphan": false,
+            "identity_provenance": "observed"
+          },
+          {
+            "identity": "h-s07-a",
+            "sample_id": "s07",
+            "os_pid": 700,
+            "parent_identity": "ghost",
+            "started": "2023-01-01T01:00:00Z",
+            "ended": null,
+            "source_record_ids": [
+              "r09"
+            ],
+            "complete": false,
+            "orphan": true,
+            "identity_provenance": "observed"
+          },
+          {
+            "identity": "h-s08-a",
+            "sample_id": "s08",
+            "os_pid": 800,
+            "parent_identity": null,
+            "started": "2023-01-01T01:10:00Z",
+            "ended": "2023-01-01T01:11:00Z",
+            "source_record_ids": [
+              "r10"
+            ],
+            "complete": true,
+            "orphan": false,
+            "identity_provenance": "observed"
+          },
+          {
+            "identity": "h-s09-a",
+            "sample_id": "s09",
+            "os_pid": 900,
+            "parent_identity": "absent",
+            "started": "2023-01-01T01:20:00Z",
+            "ended": null,
+            "source_record_ids": [
+              "r11"
+            ],
+            "complete": false,
+            "orphan": true,
+            "identity_provenance": "observed"
+          },
+          {
+            "identity": "h-s09-b",
+            "sample_id": "s09",
+            "os_pid": 901,
+            "parent_identity": "h-s09-a",
+            "started": "2023-01-01T01:20:01Z",
+            "ended": null,
+            "source_record_ids": [
+              "r12"
+            ],
+            "complete": false,
+            "orphan": false,
+            "identity_provenance": "observed"
+          },
+          {
+            "identity": "h-s10-a",
+            "sample_id": "s10",
+            "os_pid": 50,
+            "parent_identity": null,
+            "started": "2023-01-01T01:30:00Z",
+            "ended": "2023-01-01T01:31:00Z",
+            "source_record_ids": [
+              "r13"
+            ],
+            "complete": true,
+            "orphan": false,
+            "identity_provenance": "observed"
+          },
+          {
+            "identity": "h-s10-b",
+            "sample_id": "s10",
+            "os_pid": 50,
+            "parent_identity": "h-s10-a",
+            "started": "2023-01-01T01:32:00Z",
+            "ended": "2023-01-01T01:33:00Z",
+            "source_record_ids": [
+              "r14"
+            ],
+            "complete": true,
+            "orphan": false,
+            "identity_provenance": "observed"
+          },
+          {
+            "identity": "h-s12-a",
+            "sample_id": "s12",
+            "os_pid": 120,
+            "parent_identity": null,
+            "started": "2023-01-01T02:00:00Z",
+            "ended": null,
+            "source_record_ids": [
+              "r16"
+            ],
+            "complete": false,
+            "orphan": false,
+            "identity_provenance": "observed"
+          }
+        ],
+        "notes": "Structural reconstruction only. Completeness is observed start+term, not an inferred exit at the observation-window boundary. No independent process-tree accuracy is claimed without ground-truth edges."
+      },
+      "missing_termination": {
+        "complete": 0
+      },
+      "pid_reuse_injected": 2,
+      "reversed_timestamps": 0,
+      "parents_removed": 0,
+      "unknown_event_types": 15,
+      "perturbations": "synthetic stress tests; not real-world attack evidence"
+    },
+    "duplicate_records_process_count": 15,
+    "window_truncation_process_count": 8,
+    "conflicting_parent_contradictions": 0,
+    "missing_creation": 15,
+    "parents_unavailable_unsupported": 0,
+    "explanation_after_baseline": {
+      "unsupported_claim_count": 0,
+      "stability_compared": 5
+    }
+  },
+  "performance": {
+    "reconstruction_seconds": 0.000168,
+    "feature_seconds": 6.5e-05,
+    "detection_seconds": 0.037292,
+    "rss_before_kb": 131296,
+    "rss_max_kb": 177884,
+    "rows": 17,
+    "samples": 12
+  },
+  "limitations": [
+    "Sample labels are not event-level ground truth.",
+    "Phase 9 hybrid is not comparable on Wintap/DMBD identities.",
+    "Relationship labels are not calibrated probabilities.",
+    "Z3 SAT is not real-world safety.",
+    "Normalized endpoint JSONL. Not enrolled-agent telemetry. Not Linux start_ticks. SYNTHETIC PROTOCOL FIXTURE. Not DMBD/WinMET/OpTC."
+  ],
+  "notes": "SYNTHETIC PROTOCOL ONLY. Not DMBD, WinMET, or OpTC. Not independent scientific validation.",
+  "started_at": "2026-11-04T14:55:53.591278+00:00",
+  "ended_at": "2026-11-04T14:55:53.754808+00:00"
+}
