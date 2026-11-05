@@ -1,0 +1,25 @@
+# Render Blueprint for the Synapse-CRS API only.
+# Does NOT provision PostgreSQL (managed Postgres on Render is a paid resource).
+# Apply only after you have created a database yourself and approved any paid plan.
+#
+# Do not put secrets in this file. Set DATABASE_URL, SYNAPSE_AUTH_TOKENS, and
+# SYNAPSE_CORS_ORIGINS in the Render dashboard.
+
+services:
+  - type: web
+    name: synapse-crs-api
+    runtime: docker
+    dockerfilePath: ./infra/docker/api.Dockerfile
+    dockerContext: .
+    healthCheckPath: /health
+    envVars:
+      - key: SYNAPSE_ENVIRONMENT
+        value: production
+      - key: DATABASE_URL
+        sync: false
+      - key: SYNAPSE_AUTH_TOKENS
+        sync: false
+      - key: SYNAPSE_CORS_ORIGINS
+        sync: false
+      - key: SYNAPSE_MAX_REQUEST_BYTES
+        value: "65536"

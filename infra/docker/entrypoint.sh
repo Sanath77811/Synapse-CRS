@@ -12,4 +12,6 @@ if [ -z "${DATABASE_URL:-}" ]; then
   exit 1
 fi
 
-exec uvicorn synapse_api.main:app --host 0.0.0.0 --port 8000
+# Render and other PaaS inject PORT. Local Docker still defaults to 8000.
+PORT="${PORT:-8000}"
+exec uvicorn synapse_api.main:app --host 0.0.0.0 --port "$PORT"

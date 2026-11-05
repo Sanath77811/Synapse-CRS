@@ -2,7 +2,7 @@ FROM python:3.12-slim
 
 ENV PYTHONDONTWRITEBYTECODE=1 \
     PYTHONUNBUFFERED=1 \
-    PYTHONPATH=/app/packages/contracts/src:/app/packages/policy/src:/app/packages/audit/src:/app/packages/cases/src:/app/packages/telemetry/src:/app/apps/api/src
+    PYTHONPATH=/app/packages/contracts/src:/app/packages/policy/src:/app/packages/audit/src:/app/packages/cases/src:/app/packages/telemetry/src:/app/packages/agent/src:/app/packages/correlation/src:/app/packages/reasoning/src:/app/packages/validation/src:/app/apps/api/src
 
 WORKDIR /app
 
