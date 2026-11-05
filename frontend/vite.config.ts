@@ -5,7 +5,8 @@ import { defineConfig } from "vite";
 export default defineConfig({
   plugins: [react()],
   server: {
-    host: "127.0.0.1",
+    // Bind IPv4 and IPv6. host: "127.0.0.1" only makes http://localhost fail on many laptops (::1).
+    host: true,
     port: 5173,
     strictPort: true,
   },
