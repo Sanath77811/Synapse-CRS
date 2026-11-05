@@ -43,3 +43,13 @@ The registry does not prove that a target is owned or that a test is authorized.
 ## Execution limitation
 
 v0.1 has no command API, no shell integration, and no client that connects to a target. Capability names such as `telemetry.ingest` reserve vocabulary for later versions. They do not enable collection.
+
+## Research evaluation limitation
+
+Phase 10 measures hybrid components on constructed synthetic reconstructions. Those metrics are not enterprise detection rates and are not CIC-IDS2017 results unless an operator-supplied CSV is parsed as an external benchmark. Benchmark rows are not enrolled Linux telemetry.
+
+Phase 11 evaluates a flow-only protocol when CIC-IDS2017 is supplied. If the corpus is missing, the Phase 11 command fails closed and does not invent CIC-IDS2017 scores. The Phase 9 hybrid is not comparable on flow records.
+
+Phase 12 discovers independent endpoint datasets and can reconstruct DMBD-like process rows when JSONL is supplied. If DMBD/WinMET/OpTC files are missing, the Phase 12 command fails closed. Sample-level labels are not event-level ground truth. Windows process hashes are not rewritten into Linux boot identities.
+
+Phase 13 adds bounded acquisition and completeness-aware sample reasoning. Inspecting DMBD sample-label JSON is not process-tree evaluation. Independent scientific completion requires operator-supplied process evidence; the default command fails closed without it.

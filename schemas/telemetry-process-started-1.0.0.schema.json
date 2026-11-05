@@ -1,0 +1,23 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://synapse-crs.local/schemas/telemetry-process-started-1.0.0.schema.json",
+  "title": "ProcessStartedPayload",
+  "description": "First procfs-poll sighting of a process identity. comm is a task name, not a command line.",
+  "type": "object",
+  "additionalProperties": false,
+  "maxProperties": 5,
+  "x-synapse-contract-version": "1.0.0",
+  "required": ["pid", "ppid", "uid", "start_ticks", "comm"],
+  "properties": {
+    "pid": {"type": "integer", "minimum": 1, "maximum": 4194304},
+    "ppid": {"type": "integer", "minimum": 0, "maximum": 4194304},
+    "uid": {"type": "integer", "minimum": 0, "maximum": 4294967295},
+    "start_ticks": {"type": "integer", "minimum": 0, "maximum": 9223372036854775807},
+    "comm": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 15,
+      "pattern": "^(\\[redacted\\]|[A-Za-z0-9][A-Za-z0-9._:-]{0,14})$"
+    }
+  }
+}

@@ -12,20 +12,27 @@ FastAPI  ---- PostgreSQL
   |            case_transitions
   |            audit_events        (append-only)
   |            audit_chain_state   (mutable counter)
+  |            agents              (enrolled identities)
+  |            telemetry_events    (append-only evidence)
   |
   +-- packages/contracts
   +-- packages/policy
   +-- packages/cases
   +-- packages/audit
+  +-- packages/telemetry
+  +-- packages/agent
+  +-- packages/correlation
+  +-- packages/reasoning
+  +-- packages/validation
 ```
 
-There is no agent, telemetry bus, evidence runner, model client, solver, or mitigation executor in this version.
+Enrolled agents may POST signed telemetry to `/api/v1/telemetry/ingest`. The Linux collector in `packages/agent` polls procfs and uses that endpoint. `packages/correlation` links stored enrolled evidence into explainable findings. `packages/reasoning` reconstructs timelines, scores a synthetic Isolation Forest baseline, evaluates inspectable rules, and Z3-checks recommendation records. `packages/validation` runs offline research experiments (Phase 10 synthetic reconstructions, Phase 11 flow benchmarks, Phase 12–13 endpoint adapters); it does not write benchmark rows into `telemetry_events`. There is no mitigation executor. The React console in `frontend/` is an investigation UI over these routes; demonstration records are labelled and are not enrolled telemetry.
 
 ## Request path
 
 1. The process refuses to start when `DATABASE_URL` or `SYNAPSE_AUTH_TOKENS` is missing or unsafe.
 2. `/health` does not touch the database. `/ready` runs `SELECT 1`.
-3. `/api/v1/*` requires a bearer token. The actor name stored in audit events comes from the token record, not from the request body.
+3. Control-plane `/api/v1/*` routes require a bearer token. Telemetry ingest authenticates with a detached signature against the enrolled public key. The actor name stored in control-plane audit events comes from the token record, not from the request body.
 4. Writes require the `admin` role. Reads accept `admin` or `viewer`.
 5. Creating a target rejects a past expiry, an unknown capability, and a scope outside `lab` or `development`.
 6. Opening or advancing a case loads the target and runs `evaluate_authorization`. Any failed check returns 409 and leaves the case unchanged.
@@ -58,6 +65,11 @@ AUTHORIZED_TARGET
 | `case_transitions` | Transition history | Insert |
 | `audit_events` | Hash-chained history | Insert |
 | `audit_chain_state` | Next sequence and head hash | Update of the single bookkeeping row |
+| `agents` | Enrolled agent identity, public key, target binding | Insert and enrollment-lifecycle update |
+| `telemetry_events` | Signed telemetry evidence | Insert only |
+| `correlation_runs` | Correlation execution records | Insert |
+| `correlation_links` | Derived event relationships | Insert |
+| `findings` | Deduplicated explainable findings | Insert and update of derived fields |
 
 The API does not expose delete routes for these tables.
 

@@ -9,17 +9,29 @@ from synapse_contracts.version import API_VERSION
 
 from synapse_api.config import get_settings
 from synapse_api.errors import register_exception_handlers
-from synapse_api.routers import audit, cases, health, targets
+from synapse_api.limits import RequestGuardMiddleware
+from synapse_api.routers import (
+    agents,
+    audit,
+    cases,
+    correlation,
+    health,
+    reasoning,
+    targets,
+    telemetry,
+)
 
 logger = logging.getLogger("synapse.api")
 
 DESCRIPTION = """
-Synapse-CRS v0.1 is a fail-closed control-plane foundation.
+Synapse-CRS is a fail-closed control-plane foundation.
 
 It registers owned targets, records explicit authorization, stores case
-pipeline state, and appends audit events. It does not discover
-vulnerabilities, exploit systems, patch binaries, or apply runtime
-mitigations. Transitioning a case into ACTION only updates stored state.
+pipeline state, appends audit events, accepts signed telemetry from
+enrolled agents, and correlates stored evidence into explainable findings.
+It does not discover vulnerabilities, exploit systems,
+patch binaries, or apply runtime mitigations. Transitioning a case into
+ACTION only updates stored state.
 """.strip()
 
 
@@ -52,11 +64,16 @@ def create_app() -> FastAPI:
         allow_methods=["GET", "POST"],
         allow_headers=["Authorization", "Content-Type"],
     )
+    app.add_middleware(RequestGuardMiddleware, max_bytes=settings.synapse_max_request_bytes)
     register_exception_handlers(app)
     app.include_router(health.router)
     app.include_router(targets.router)
+    app.include_router(agents.router)
     app.include_router(cases.router)
     app.include_router(audit.router)
+    app.include_router(telemetry.router)
+    app.include_router(correlation.router)
+    app.include_router(reasoning.router)
 
     @app.get("/", include_in_schema=False)
     def root() -> dict[str, str]:
@@ -67,8 +84,8 @@ def create_app() -> FastAPI:
             "ready": "/ready",
             "docs": docs_url or "",
             "summary": (
-                "v0.1 records authorization, case state, and audit events. "
-                "It does not execute security actions."
+                "Records authorization, case state, audit events, and enrolled "
+                "telemetry. It does not execute security actions."
             ),
         }
 

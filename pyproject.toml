@@ -6,6 +6,7 @@ readme = "README.md"
 requires-python = ">=3.12"
 dependencies = [
     "alembic>=1.14.0",
+    "cryptography>=44.0.0",
     "fastapi>=0.115.0",
     "jsonschema>=4.23.0",
     "pydantic>=2.10.0",
@@ -13,6 +14,8 @@ dependencies = [
     "psycopg[binary]>=3.2.0",
     "sqlalchemy>=2.0.36",
     "uvicorn>=0.32.0",
+    "scikit-learn>=1.5.0",
+    "z3-solver>=4.13.0",
 ]
 
 [project.optional-dependencies]
@@ -40,6 +43,11 @@ pythonpath = [
     "packages/policy/src",
     "packages/audit/src",
     "packages/cases/src",
+    "packages/telemetry/src",
+    "packages/agent/src",
+    "packages/correlation/src",
+    "packages/reasoning/src",
+    "packages/validation/src",
     "apps/api/src",
 ]
 

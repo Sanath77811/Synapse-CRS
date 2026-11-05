@@ -57,6 +57,18 @@ def test_unknown_environment_is_rejected() -> None:
         )
 
 
+def test_request_size_bounds_are_enforced() -> None:
+    with pytest.raises(ValidationError):
+        Settings(
+            _env_file=None,
+            database_url="postgresql+psycopg://synapse_app:example@localhost/synapse",
+            synapse_environment="test",
+            synapse_auth_tokens=json.dumps({"e" * 32: {"actor": "local-admin", "role": "admin"}}),
+            synapse_cors_origins="http://localhost:5173",
+            synapse_max_request_bytes=16,
+        )
+
+
 def test_valid_local_settings_parse() -> None:
     settings = _settings(
         "test",

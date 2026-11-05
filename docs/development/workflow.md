@@ -21,6 +21,14 @@ Copy `.env.example` to `.env` and fill it in before Compose or pytest. See the R
 | `make format` | Apply ruff fixes and formatting |
 | `make api` | Run uvicorn on `127.0.0.1:8000` using the host `.env` |
 | `make migrate` | Apply Alembic migrations with `MIGRATION_DATABASE_URL` or `DATABASE_URL` |
+| `make demo` | Run the offline telemetry security demonstrator |
+| `make demo-persist` | Persist a verified synthetic event in PostgreSQL |
+| `make research-eval` | Run the Phase 10 synthetic research harness and write reports |
+| `make research-eval-phase11` | Run the Phase 11 flow benchmark (exit 2 if CIC-IDS2017 is absent) |
+| `make research-eval-phase12` | Run the Phase 12 endpoint track (exit 2 if DMBD JSONL is absent) |
+| `make research-eval-phase13` | Run the Phase 13 independent-evidence track (exit 2 if process JSONL is absent) |
+
+Frontend: `cd frontend && npm ci && npm run dev` (console on `127.0.0.1:5173`). `npm run build` and `npm test` are required before merging UI changes. See [guides/frontend.md](../guides/frontend.md).
 
 `make api` and `make migrate` read `.env` directly. Do not `source .env` in a shell: the token JSON can be altered by the shell parser. pytest also loads `.env` when the variables are unset.
 

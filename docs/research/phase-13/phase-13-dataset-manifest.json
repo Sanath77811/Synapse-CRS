@@ -1,0 +1,19 @@
+{
+  "name": "dmbd",
+  "version": "not_present",
+  "path": "",
+  "sha256": "",
+  "file_size_bytes": 0,
+  "row_count": 0,
+  "excluded_count": 0,
+  "excluded_reasons": {},
+  "sample_count": 0,
+  "label_counts": {},
+  "label_scope": "sample",
+  "split_counts": {},
+  "event_types": {},
+  "dataset_class": "external_endpoint_benchmark",
+  "available": false,
+  "notes": "No independent endpoint process dataset is present. Set SYNAPSE_DMBD_JSONL to local DMBD-like process JSONL. trees_*.json were not auto-downloaded (\u22481 GB/shard). Label JSON inspection, if present, is not tree evaluation.",
+  "normalization_version": "endpoint-evidence-1.0.0"
+}

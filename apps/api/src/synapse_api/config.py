@@ -27,6 +27,7 @@ class Settings(BaseSettings):
     synapse_environment: str = "local"
     synapse_auth_tokens: str
     synapse_cors_origins: str = "http://localhost:5173,http://127.0.0.1:5173"
+    synapse_max_request_bytes: int = Field(default=65536, ge=4096, le=1_048_576)
 
     @field_validator("synapse_environment")
     @classmethod
